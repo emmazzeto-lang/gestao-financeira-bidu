@@ -22,6 +22,76 @@ namespace GestaoFinanceira.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.ContaBancaria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Agencia")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("NomeBanco")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NumeroConta")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("SaldoAtual")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContasBancarias");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Despesa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContaBancariaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DataPagamento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("PlanoTrabalhoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("PlanoTrabalhoId");
+
+                    b.ToTable("Despesas");
+                });
+
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Parceria", b =>
                 {
                     b.Property<int>("Id")
@@ -56,6 +126,117 @@ namespace GestaoFinanceira.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Parcerias");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.PlanoTrabalho", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<int>("ParceriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("ValorAprovado")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParceriaId");
+
+                    b.ToTable("PlanosTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Receita", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContaBancariaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DataRecebimento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("PlanoTrabalhoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("PlanoTrabalhoId");
+
+                    b.ToTable("Receitas");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Despesa", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.ContaBancaria", "ContaBancaria")
+                        .WithMany()
+                        .HasForeignKey("ContaBancariaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestaoFinanceira.Api.Models.PlanoTrabalho", "PlanoTrabalho")
+                        .WithMany()
+                        .HasForeignKey("PlanoTrabalhoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContaBancaria");
+
+                    b.Navigation("PlanoTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.PlanoTrabalho", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.Parceria", "Parceria")
+                        .WithMany()
+                        .HasForeignKey("ParceriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parceria");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Receita", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.ContaBancaria", "ContaBancaria")
+                        .WithMany()
+                        .HasForeignKey("ContaBancariaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestaoFinanceira.Api.Models.PlanoTrabalho", "PlanoTrabalho")
+                        .WithMany()
+                        .HasForeignKey("PlanoTrabalhoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContaBancaria");
+
+                    b.Navigation("PlanoTrabalho");
                 });
 #pragma warning restore 612, 618
         }

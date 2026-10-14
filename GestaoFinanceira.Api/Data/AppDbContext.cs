@@ -10,6 +10,10 @@ namespace GestaoFinanceira.Api.Data
         }
 
         public DbSet<Parceria> Parcerias { get; set; }
+        public DbSet<ContaBancaria> ContasBancarias { get; set; }
+        public DbSet<PlanoTrabalho> PlanosTrabalho { get; set; }
+        public DbSet<Receita> Receitas { get; set; }
+        public DbSet<Despesa> Despesas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -18,6 +22,22 @@ namespace GestaoFinanceira.Api.Data
             // Definição de precisão para valores financeiros para evitar arredondamentos indevidos
             modelBuilder.Entity<Parceria>()
                 .Property(p => p.ValorTotal)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ContaBancaria>()
+                .Property(c => c.SaldoAtual)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<PlanoTrabalho>()
+                .Property(pt => pt.ValorAprovado)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Receita>()
+                .Property(r => r.Valor)
+                .HasPrecision(18, 2);
+                
+            modelBuilder.Entity<Despesa>()
+                .Property(d => d.Valor)
                 .HasPrecision(18, 2);
         }
     }
