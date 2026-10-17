@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parcerias - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="parcerias">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Parcerias</h1>
+            <p>Termos de fomento, colaboração, convênios e doações</p>
+          </div>
+          <div class="acoes">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#novaParceria">
+              <i class="bi bi-plus-lg"></i> Nova parceria
+            </button>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <div class="input-group" style="max-width: 300px">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input class="form-control" id="filtroTexto" type="search" placeholder="Buscar termo ou nome">
+          </div>
+          <select class="form-select" id="filtroSituacao" aria-label="Situação">
+            <option value="">Todas</option>
+            <option value="ativa">Ativas</option>
+            <option value="encerrada">Encerradas</option>
+          </select>
+          <span class="resumo" id="resumo"></span>
+        </div>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <div class="flex-grow-1" style="min-width: 0">
+            <section class="folha">
+              <div class="table-responsive">
+                <table class="razao" style="min-width: 760px">
+                  <thead>
+                    <tr>
+                      <th>Termo</th><th>Parceria</th><th>Vigência</th>
+                      <th class="valor filete">Valor total</th><th>Situação</th>
+                    </tr>
+                  </thead>
+                  <tbody id="listaParcerias">
+                    <tr><td colspan="5" class="py-4 text-center text-secondary">
+                      <span class="spinner-border spinner-border-sm me-2"></span>Carregando parcerias...
+                    </td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="coluna-margem">
+            <section class="folha">
+              <div class="folha-topo"><h2>Liberação de aportes</h2></div>
+              <div class="px-3 pb-2">
+                <div class="alert alert-warning d-flex gap-2 mb-2">
+                  <i class="bi bi-lock"></i>
+                  <span>Uma parceria só recebe receitas depois que o plano de trabalho for validado.</span>
+                </div>
+              </div>
+              <ol class="passos">
+                <li class="feito"><span class="bolinha"><i class="bi bi-check"></i></span><div><strong>Parceria cadastrada</strong><small>Termo, vigência e valor total</small></div></li>
+                <li class="atual"><span class="bolinha"></span><div><strong>Plano de trabalho</strong><small>Metas e fontes de recurso</small></div></li>
+                <li class="futuro"><span class="bolinha"></span><div><strong>Validação da diretoria</strong><small>Parecer sobre o plano</small></div></li>
+                <li class="futuro"><span class="bolinha"></span><div><strong>Aportes liberados</strong><small>Receitas podem ser lançadas</small></div></li>
+              </ol>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="novaParceria" aria-labelledby="tituloNovaParceria" style="--bs-offcanvas-width: 440px">
+    <div class="offcanvas-header border-bottom">
+      <h2 class="offcanvas-title fs-5 fw-semibold" id="tituloNovaParceria">Nova parceria</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <form id="formParceria" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="termo">Nº do termo</label>
+          <input class="form-control" id="termo" name="termoFomento" maxlength="50" required placeholder="Ex.: TF 012/2025">
+          <div class="invalid-feedback">Informe o número do termo.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="nome">Nome da parceria / concedente</label>
+          <input class="form-control" id="nome" name="nome" maxlength="200" required placeholder="Ex.: Prefeitura Municipal - Assistência Social">
+          <div class="invalid-feedback">Informe o nome da parceria.</div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label class="form-label" for="inicio">Início da vigência</label>
+            <input class="form-control" id="inicio" name="dataInicio" type="date" required>
+            <div class="invalid-feedback">Informe a data de início.</div>
+          </div>
+          <div class="col-6">
+            <label class="form-label" for="fim">Fim da vigência</label>
+            <input class="form-control" id="fim" name="dataFim" type="date" required>
+            <div class="invalid-feedback" id="erroFim">Informe a data de fim.</div>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="valor">Valor total (R$)</label>
+          <input class="form-control campo-valor" id="valor" name="valorTotal" inputmode="decimal" required placeholder="0,00">
+          <div class="invalid-feedback">Informe um valor maior que zero.</div>
+        </div>
+        <div class="alert alert-danger d-none" id="erroSalvar"></div>
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-link" type="button" data-bs-dismiss="offcanvas">Cancelar</button>
+          <button class="btn btn-primary" type="submit" id="botaoSalvar"><i class="bi bi-check2"></i> Salvar parceria</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast align-items-center" id="avisoSalvo" role="status">
+      <div class="d-flex">
+        <div class="toast-body">Parceria cadastrada.</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/parcerias.js"></script>
+</body>
+</html>

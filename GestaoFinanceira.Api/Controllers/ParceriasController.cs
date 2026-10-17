@@ -16,14 +16,12 @@ namespace GestaoFinanceira.Api.Controllers
             _context = context;
         }
 
-        // GET: api/Parcerias (Lista todas as parcerias)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Parceria>>> GetParcerias()
         {
             return await _context.Parcerias.ToListAsync();
         }
 
-        // POST: api/Parcerias (Cria uma nova parceria)
         [HttpPost]
         public async Task<ActionResult<Parceria>> PostParceria(Parceria parceria)
         {

@@ -14,7 +14,6 @@ namespace GestaoFinanceira.Api.Models
 
         public decimal ValorAprovado { get; set; }
 
-        // Relacionamento com a Parceria que já criamos
         [Required]
         public int ParceriaId { get; set; }
         

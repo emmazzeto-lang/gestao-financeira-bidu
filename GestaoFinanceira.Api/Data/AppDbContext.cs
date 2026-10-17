@@ -18,8 +18,7 @@ namespace GestaoFinanceira.Api.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
-            // Definição de precisão para valores financeiros para evitar arredondamentos indevidos
+
             modelBuilder.Entity<Parceria>()
                 .Property(p => p.ValorTotal)
                 .HasPrecision(18, 2);
