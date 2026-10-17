@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="painel">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Painel</h1>
+            <p>Setembro de 2026 - Prefeitura Municipal - Assistência Social</p>
+          </div>
+          <div class="acoes">
+            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-download"></i> Exportar</button>
+            <a class="btn btn-primary" href="novo-lancamento.html"><i class="bi bi-plus-lg"></i> Novo lançamento</a>
+          </div>
+        </div>
+
+        <div class="folha transporte">
+          <span class="termo">Transporte <span class="valor">258.285,95</span></span>
+          <span class="termo entrada">+ Entradas <span class="valor">67.000,00</span></span>
+          <span class="termo saida">- Saídas <span class="valor">12.805,40</span></span>
+          <span class="termo resultado">= Saldo em 17/09 <span class="valor">312.480,55</span></span>
+        </div>
+        <p class="nota-transporte">3 contas bancárias - conciliado com extrato até 18/09/2026 - valores em R$</p>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <div class="flex-grow-1" style="min-width: 0">
+
+            <section class="folha">
+              <div class="folha-topo">
+                <div class="d-flex align-items-baseline gap-3 flex-wrap">
+                  <h2>Razão de setembro</h2>
+                  <span class="detalhe">Folha 09/2026 - BB - CC 56789-0</span>
+                </div>
+                <a class="link-forte" href="#">Abrir razão completo</a>
+              </div>
+
+              <div class="table-responsive">
+                <table class="razao fixa" style="min-width: 640px">
+                  <colgroup>
+                    <col style="width: 84px"><col style="width: 58px"><col>
+                    <col style="width: 108px"><col style="width: 108px"><col style="width: 118px"><col style="width: 48px">
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>Nº</th><th>Data</th><th>Histórico</th>
+                      <th class="valor filete">Débito</th><th class="valor">Crédito</th><th class="valor">Saldo</th>
+                      <th class="text-center">Conf.</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="transportado">
+                      <td class="numero">-</td><td class="data">01/09</td>
+                      <td>Transporte do mês anterior</td>
+                      <td class="valor filete"></td><td class="valor"></td><td class="valor">258.285,95</td><td></td>
+                    </tr>
+                    <tr>
+                      <td class="numero">1037</td><td class="data">10/09</td>
+                      <td><div class="historico">Doação - Instituto Parceiro</div><div class="complemento">Receita - Recibo 0213</div></td>
+                      <td class="valor filete debito"></td><td class="valor credito">5.000,00</td><td class="valor">263.285,95</td>
+                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
+                    </tr>
+                    <tr>
+                      <td class="numero">1038<span class="alfinete pequeno">2</span></td><td class="data">12/09</td>
+                      <td><div class="historico">Material pedagógico - Papelaria Central</div><div class="complemento">Meta 2 - Educação - NF-e 88120</div></td>
+                      <td class="valor filete debito">1.184,50</td><td class="valor credito"></td><td class="valor">262.101,45</td>
+                      <td class="text-center"><i class="bi bi-circle conferencia pendente" title="A conciliar"></i></td>
+                    </tr>
+                    <tr>
+                      <td class="numero">1039<span class="alfinete pequeno">1</span></td><td class="data">15/09</td>
+                      <td><div class="historico">Oficina de música - Ana Lima</div><div class="complemento">Meta 2 - Educação - sem documento</div></td>
+                      <td class="valor filete debito">3.200,00</td><td class="valor credito"></td><td class="valor">258.901,45</td>
+                      <td class="text-center"><i class="bi bi-exclamation-circle conferencia falta" title="Sem comprovante"></i></td>
+                    </tr>
+                    <tr>
+                      <td class="numero">1040</td><td class="data">16/09</td>
+                      <td><div class="historico">Repasse TF 012/2025 - 4ª parcela</div><div class="complemento">Receita - Ofício 41/26</div></td>
+                      <td class="valor filete debito"></td><td class="valor credito">62.000,00</td><td class="valor">320.901,45</td>
+                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
+                    </tr>
+                    <tr>
+                      <td class="numero">1041</td><td class="data">17/09</td>
+                      <td><div class="historico">Gêneros alimentícios - Atacadão</div><div class="complemento">Meta 1 - Alimentação - NF-e 004512</div></td>
+                      <td class="valor filete debito">8.420,90</td><td class="valor credito"></td><td class="valor">312.480,55</td>
+                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
+                    </tr>
+                    <tr class="em-branco"><td></td><td></td><td></td><td class="filete"></td><td></td><td></td><td></td></tr>
+                    <tr class="em-branco"><td></td><td></td><td></td><td class="filete"></td><td></td><td></td><td></td></tr>
+                    <tr class="total">
+                      <td></td><td></td><td>Saldo em 17/09 - a transportar</td>
+                      <td class="valor filete debito">12.805,40</td><td class="valor credito">67.000,00</td>
+                      <td class="valor"><span class="sublinhado-duplo">312.480,55</span></td><td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="folha-rodape">
+                <span class="conferencia ok"><i class="bi bi-check2"></i> conciliado</span>
+                <span class="conferencia pendente"><i class="bi bi-circle"></i> a conciliar</span>
+                <span class="conferencia falta"><i class="bi bi-exclamation-circle"></i> sem comprovante</span>
+                <span class="ms-auto text-secondary">Débito em vermelho, crédito em azul - valores em R$</span>
+              </div>
+            </section>
+
+            <section class="folha">
+              <div class="folha-topo">
+                <h2>Execução por meta</h2>
+                <span class="detalhe">Mesma escala em R$: o tamanho da barra é o valor previsto</span>
+              </div>
+              <div class="metas" id="metas"></div>
+            </section>
+          </div>
+
+          <aside class="coluna-margem">
+            <section class="folha">
+              <div class="folha-topo">
+                <h2>À margem</h2>
+                <span class="detalhe">3 pendências</span>
+              </div>
+              <div class="nota">
+                <span class="alfinete">1</span>
+                <div>
+                  <strong>Nº 1039 sem comprovante</strong>
+                  <p>Oficina de música, R$ 3.200,00. Despesa sem documento não entra na prestação de contas.</p>
+                  <a href="novo-lancamento.html">Anexar comprovante</a>
+                </div>
+              </div>
+              <div class="nota">
+                <span class="alfinete">2</span>
+                <div>
+                  <strong>12 movimentos a conciliar</strong>
+                  <p>Extrato BB - CC 56789-0 importado em 18/09. Inclui o Nº 1038.</p>
+                  <a href="conciliacao.html">Conciliar agora</a>
+                </div>
+              </div>
+              <div class="nota">
+                <span class="alfinete">3</span>
+                <div>
+                  <strong>Prestação do TF 012/2025 em 12 dias</strong>
+                  <p>Prazo 30/09/2026. 6 outras despesas ainda sem nota fiscal.</p>
+                  <a href="prestacao-contas.html">Ver checklist</a>
+                </div>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    // TODO: trocar pelos dados da API quando existir o endpoint de metas
+    const metas = [
+      { nome: 'Meta 1 - Alimentação', previsto: 720000, executado: 561600 },
+      { nome: 'Meta 2 - Educação', previsto: 540000, executado: 291600 },
+      { nome: 'Meta 3 - Saúde', previsto: 300000, executado: 273000 },
+      { nome: 'Meta 4 - Infraestrutura', previsto: 240000, executado: 76800 }
+    ];
+
+    const maiorPrevisto = Math.max(...metas.map(m => m.previsto));
+
+    document.getElementById('metas').innerHTML = metas.map(m => {
+      const pct = Math.round(m.executado / m.previsto * 100);
+      const alerta = pct >= 90 ? ' alerta' : '';
+      return `
+        <div class="meta-linha">
+          <div>${m.nome}</div>
+          <div class="trilho-celula">
+            <div class="trilho${alerta}" style="width: ${m.previsto / maiorPrevisto * 100}%">
+              <span style="width: ${pct}%"></span>
+            </div>
+          </div>
+          <div class="executado">${moeda(m.executado)}<small>de ${moeda(m.previsto)}</small></div>
+          <div class="percentual${alerta}">${pct}%</div>
+        </div>`;
+    }).join('');
+  </script>
+</body>
+</html>

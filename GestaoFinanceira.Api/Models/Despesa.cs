@@ -17,7 +17,6 @@ namespace GestaoFinanceira.Api.Models
         
         public DateTime DataPagamento { get; set; }
 
-        // Vínculos obrigatórios
         [Required]
         public int ContaBancariaId { get; set; }
         

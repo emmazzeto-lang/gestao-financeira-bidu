@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Novo lançamento - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="despesas">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Novo lançamento</h1>
+            <p>Registrado no razão de setembro - TF 012/2025</p>
+          </div>
+        </div>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <form class="folha flex-grow-1" id="formLancamento" novalidate style="min-width: 0">
+            <div class="folha-topo">
+              <h2>Despesa Nº <span id="numeroLancamento">1042</span></h2>
+              <div class="btn-group tipo-lancamento" role="group" aria-label="Tipo de lançamento">
+                <input type="radio" class="btn-check" name="tipo" id="tipoReceita" value="receita">
+                <label class="btn btn-outline-secondary" for="tipoReceita">Receita</label>
+                <input type="radio" class="btn-check" name="tipo" id="tipoDespesa" value="despesa" checked>
+                <label class="btn btn-outline-secondary" for="tipoDespesa">Despesa</label>
+                <input type="radio" class="btn-check" name="tipo" id="tipoPagamento" value="pagamento">
+                <label class="btn btn-outline-secondary" for="tipoPagamento">Pagamento</label>
+              </div>
+            </div>
+
+            <div class="secao-form">
+              <h3>Vínculo</h3>
+              <p class="dica">Parceria -> plano de trabalho -> fonte -> meta. Só aparecem metas de planos validados.</p>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="parceria">Parceria</label>
+                  <select class="form-select" id="parceria" required></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="plano">Plano de trabalho</label>
+                  <select class="form-select" id="plano" required></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="fonte">Fonte de recurso</label>
+                  <select class="form-select" id="fonte" required></select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="meta">Meta</label>
+                  <select class="form-select" id="meta" required></select>
+                </div>
+              </div>
+            </div>
+
+            <div class="secao-form">
+              <h3>Detalhes</h3>
+              <div class="row g-3 mt-0">
+                <div class="col-md-8">
+                  <label class="form-label" for="fornecedor">Fornecedor</label>
+                  <select class="form-select" id="fornecedor" required>
+                    <option value="">Selecione...</option>
+                    <option value="75.315.333/0001-09" selected>Atacadão Distribuidora Ltda.</option>
+                    <option value="12.345.678/0001-90">Papelaria Central Ltda.</option>
+                    <option value="98.765.432/0001-10">Ana Lima (MEI)</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="cnpj">CNPJ</label>
+                  <input class="form-control" id="cnpj" readonly>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label" for="conta">Conta bancária</label>
+                  <select class="form-select" id="conta" required>
+                    <option value="1" selected>BB - Ag 1234 - CC 56789-0</option>
+                    <option value="2">Caixa - Ag 0987 - CC 11223-4</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="formaPagamento">Forma de pagamento</label>
+                  <select class="form-select" id="formaPagamento">
+                    <option>Transferência (PIX)</option>
+                    <option>TED</option>
+                    <option>Boleto</option>
+                    <option>Cartão da instituição</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="data">Data</label>
+                  <input class="form-control" id="data" type="date" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="competencia">Competência</label>
+                  <input class="form-control" id="competencia" type="month" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="valor">Valor (R$)</label>
+                  <input class="form-control campo-valor" id="valor" inputmode="decimal" required placeholder="0,00">
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="historico">Histórico</label>
+                  <textarea class="form-control" id="historico" rows="2" maxlength="200" required
+                            placeholder="O que foi comprado e para quê"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="secao-form">
+              <h3>Comprovante <span class="obrigatorio">obrigatório</span></h3>
+              <div id="arquivoAnexado"></div>
+              <label class="area-envio" id="areaEnvio" for="comprovante">
+                <i class="bi bi-upload"></i>
+                <span>Arraste o arquivo aqui ou <u>escolha no computador</u> - PDF, JPG ou PNG até 10 MB</span>
+              </label>
+              <input class="d-none" type="file" id="comprovante" accept=".pdf,.jpg,.jpeg,.png">
+              <div class="row g-3 mt-1">
+                <div class="col-md-8">
+                  <label class="form-label" for="tipoDocumento">Tipo de documento</label>
+                  <select class="form-select" id="tipoDocumento">
+                    <option>Nota fiscal eletrônica (NF-e)</option>
+                    <option>Nota fiscal de serviço (NFS-e)</option>
+                    <option>Recibo</option>
+                    <option>Cupom fiscal</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label" for="numeroDocumento">Nº do documento</label>
+                  <input class="form-control" id="numeroDocumento" required>
+                </div>
+              </div>
+              <div class="alert alert-danger d-flex gap-2 mt-3 mb-0 d-none" id="avisoDuplicado">
+                <i class="bi bi-exclamation-circle"></i>
+                <span></span>
+              </div>
+            </div>
+
+            <div class="rodape-form">
+              <span class="salvo" id="statusRascunho">Rascunho não salvo</span>
+              <a class="btn btn-link" href="painel.html">Cancelar</a>
+              <button class="btn btn-outline-secondary" type="button" id="salvarRascunho">Salvar rascunho</button>
+              <button class="btn btn-primary" type="submit" id="registrar" disabled><i class="bi bi-check2"></i> Registrar despesa</button>
+            </div>
+          </form>
+
+          <aside class="coluna-margem">
+            <section class="folha">
+              <div class="folha-topo">
+                <h2 id="tituloEfeito">Efeito na meta</h2>
+                <span class="detalhe">se registrada</span>
+              </div>
+              <table class="efeito">
+                <tr><td>Previsto no plano</td><td id="efeitoPrevisto">-</td></tr>
+                <tr><td>Executado até hoje</td><td class="text-danger" id="efeitoExecutado">-</td></tr>
+                <tr><td>Esta despesa</td><td class="text-danger" id="efeitoEsta">-</td></tr>
+                <tr class="total"><td>Disponível depois</td><td><span class="sublinhado-duplo" id="efeitoDisponivel">-</span></td></tr>
+              </table>
+              <div class="px-3 pt-2">
+                <div class="barra-fina w-100 m-0" style="height: 8px"><span id="efeitoBarra" style="width: 0"></span></div>
+              </div>
+              <p class="texto-apoio px-3 pt-2 pb-3 mb-0" id="efeitoPercentual"></p>
+            </section>
+
+            <section class="folha">
+              <div class="folha-topo">
+                <h2>Conferência</h2>
+                <span class="conferencia" id="placarConferencia"></span>
+              </div>
+              <ul class="checagens" id="checagens"></ul>
+              <p class="texto-apoio px-3 py-3 mb-0">O registro só é liberado quando todos os itens passam.</p>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast" id="aviso" role="status">
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/novo-lancamento.js"></script>
+</body>
+</html>

@@ -9,6 +9,7 @@ Modernizar a gestão da Fundação, reduzir processos manuais e centralizar info
 * PostgreSQL
 * Docker
 * Entity Framework Core
+* HTML5, CSS3, JavaScript e Bootstrap 5 (front-end)
 
 **Pré-requisitos**
 * [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
@@ -28,3 +29,14 @@ Modernizar a gestão da Fundação, reduzir processos manuais e centralizar info
    `cd GestaoFinanceira.Api`
 6. Execute o projeto:
    `dotnet run`
+7. Acesse o sistema no navegador:
+   `http://localhost:5108` (a documentação da API fica em `http://localhost:5108/swagger`)
+
+**Front-end**
+As telas ficam em `GestaoFinanceira.Api/wwwroot` e são servidas pela própria API.
+* `css/tema.css`: cores e ajustes do Bootstrap
+* `css/app.css`: layout e componentes (razão, notas à margem, conferência)
+* `js/layout.js`: menu lateral, barra do topo e barra inferior do celular
+* `js/api.js`: chamadas para a API
+
+A tela de Parcerias já usa a API. As demais ainda usam dados de exemplo até os endpoints ficarem prontos.

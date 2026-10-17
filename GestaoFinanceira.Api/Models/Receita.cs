@@ -17,7 +17,6 @@ namespace GestaoFinanceira.Api.Models
         
         public DateTime DataRecebimento { get; set; }
 
-        // Vínculos obrigatórios para garantir a rastreabilidade
         [Required]
         public int ContaBancariaId { get; set; }
         

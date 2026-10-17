@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prestação de contas - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="prestacao">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Prestação de contas</h1>
+            <p>Consolidado da execução com rastreabilidade de cada real</p>
+          </div>
+          <div class="acoes">
+            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+            <button class="btn btn-primary" type="button"><i class="bi bi-file-earmark-text"></i> Gerar relatório</button>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <select class="form-select" aria-label="Período">
+            <option>Mar/2025 - Set/2026</option>
+            <option>Somente 2026</option>
+          </select>
+          <select class="form-select" aria-label="Fonte de recurso">
+            <option>Todas as fontes</option>
+            <option>Recurso público municipal</option>
+            <option>Recursos próprios</option>
+            <option>Doações privadas</option>
+          </select>
+        </div>
+
+        <div class="folha transporte">
+          <span class="termo">Total previsto <span class="valor">1.800.000,00</span></span>
+          <span class="termo saida">- Executado <span class="valor">1.203.000,00</span></span>
+          <span class="termo resultado">= Saldo a executar <span class="valor">597.000,00</span></span>
+        </div>
+        <p class="nota-transporte">Vigência até 28/02/2027 - antes do envio: 7 despesas sem comprovante e 12 movimentos a conciliar</p>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <div class="flex-grow-1" style="min-width: 0">
+
+            <section class="folha">
+              <div class="folha-topo">
+                <div>
+                  <h2>Execução por meta e fonte de recurso</h2>
+                  <p class="texto-apoio">Previsto x executado - TF 012/2025 - mar/2025 a set/2026</p>
+                </div>
+                <span class="conferencia pendente"><i class="bi bi-circle"></i> 7 comprovantes pendentes</span>
+              </div>
+              <div class="table-responsive">
+                <table class="razao fixa" style="min-width: 760px">
+                  <colgroup>
+                    <col><col style="width: 160px"><col style="width: 116px"><col style="width: 116px">
+                    <col style="width: 108px"><col style="width: 60px"><col style="width: 104px">
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>Meta</th><th>Fonte de recurso</th>
+                      <th class="valor filete">Previsto</th><th class="valor">Executado</th><th class="valor">Saldo</th>
+                      <th class="valor">%</th><th class="valor">Comprov.</th>
+                    </tr>
+                  </thead>
+                  <tbody id="execucao"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="folha">
+              <div class="folha-topo">
+                <h2>Relatórios gerados</h2>
+                <span class="detalhe">Modelos conforme exigência do concedente</span>
+              </div>
+              <div class="table-responsive">
+                <table class="razao" style="min-width: 560px">
+                  <thead><tr><th>Relatório</th><th>Gerado em</th><th>Formato</th><th></th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><div class="historico">Demonstrativo de receitas e despesas</div><div class="complemento">mar/2025 a set/2026</div></td>
+                      <td class="data">18/09/2026 09:12</td><td class="numero">PDF</td>
+                      <td class="text-end"><button class="btn btn-outline-secondary btn-sm" type="button"><i class="bi bi-download"></i> Baixar</button></td>
+                    </tr>
+                    <tr>
+                      <td><div class="historico">Relação de pagamentos por fornecedor</div><div class="complemento">mar/2025 a set/2026</div></td>
+                      <td class="data">18/09/2026 09:12</td><td class="numero">XLSX</td>
+                      <td class="text-end"><button class="btn btn-outline-secondary btn-sm" type="button"><i class="bi bi-download"></i> Baixar</button></td>
+                    </tr>
+                    <tr>
+                      <td><div class="historico">Conciliação bancária consolidada</div><div class="complemento">mar/2025 a set/2026</div></td>
+                      <td class="data">17/09/2026 17:40</td><td class="numero">PDF</td>
+                      <td class="text-end"><button class="btn btn-outline-secondary btn-sm" type="button"><i class="bi bi-download"></i> Baixar</button></td>
+                    </tr>
+                    <tr>
+                      <td><div class="historico">Execução físico-financeira por meta</div><div class="complemento">mar/2025 a set/2026</div></td>
+                      <td class="data">17/09/2026 17:40</td><td class="numero">PDF</td>
+                      <td class="text-end"><button class="btn btn-outline-secondary btn-sm" type="button"><i class="bi bi-download"></i> Baixar</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="coluna-margem">
+            <section class="folha">
+              <div class="folha-topo">
+                <div>
+                  <h2>Rastreabilidade</h2>
+                  <p class="texto-apoio">Do termo ao extrato, lançamento Nº 1041</p>
+                </div>
+              </div>
+              <ol class="trilha">
+                <li><span class="ponto"></span><div><small>Parceria</small><strong>TF 012/2025 - Prefeitura Municipal</strong></div></li>
+                <li><span class="ponto"></span><div><small>Plano de trabalho</small><strong>Plano 2025/2027 - validado em 12/02/2025</strong></div></li>
+                <li><span class="ponto"></span><div><small>Fonte de recurso</small><strong>Recurso público municipal</strong></div></li>
+                <li><span class="ponto"></span><div><small>Meta</small><strong>Meta 1 - Alimentação</strong></div></li>
+                <li><span class="ponto"></span><div><small>Lançamento</small><strong>Nº 1041 - R$ 8.420,90 - 17/09/2026</strong></div></li>
+                <li><span class="ponto"></span><div><small>Comprovante</small><strong>NF-e 004512 - Atacadão</strong></div></li>
+                <li><span class="ponto"></span><div><small>Conciliação</small><strong>Extrato BB de 17/09/2026</strong></div></li>
+              </ol>
+              <form class="px-3 pb-3" onsubmit="event.preventDefault()">
+                <div class="input-group">
+                  <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                  <input class="form-control" placeholder="Rastrear outro Nº" inputmode="numeric" aria-label="Número do lançamento">
+                </div>
+              </form>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/layout.js"></script>
+  <script>
+    // TODO: buscar da API quando o módulo de relatórios estiver pronto
+    const execucao = [
+      { meta: 'Meta 1 - Alimentação', fonte: 'Recurso público municipal', previsto: 720000, executado: 561600, comprovantes: [179, 182] },
+      { meta: 'Meta 2 - Educação', fonte: 'Recurso público municipal', previsto: 540000, executado: 291600, comprovantes: [70, 74] },
+      { meta: 'Meta 3 - Saúde', fonte: 'Recursos próprios', previsto: 300000, executado: 273000, comprovantes: [38, 38] },
+      { meta: 'Meta 4 - Infraestrutura', fonte: 'Doações privadas', previsto: 240000, executado: 76800, comprovantes: [18, 18] }
+    ];
+
+    const soma = campo => execucao.reduce((t, l) => t + l[campo], 0);
+    const pct = (a, b) => (a / b * 100).toFixed(0) + '%';
+    const comprov = ([tem, total]) =>
+      `<span class="${tem < total ? 'debito' : 'text-secondary'}">${tem} / ${total}</span>`;
+
+    const totalPrevisto = soma('previsto');
+    const totalExecutado = soma('executado');
+    const totalComprov = [
+      execucao.reduce((t, l) => t + l.comprovantes[0], 0),
+      execucao.reduce((t, l) => t + l.comprovantes[1], 0)
+    ];
+
+    document.getElementById('execucao').innerHTML = execucao.map(l => `
+      <tr>
+        <td><div class="historico">${l.meta}</div></td>
+        <td>${l.fonte}</td>
+        <td class="valor filete">${moeda(l.previsto)}</td>
+        <td class="valor">${moeda(l.executado)}</td>
+        <td class="valor">${moeda(l.previsto - l.executado)}</td>
+        <td class="valor">${pct(l.executado, l.previsto)}</td>
+        <td class="valor">${comprov(l.comprovantes)}</td>
+      </tr>`).join('') + `
+      <tr class="total">
+        <td colspan="2">Total da parceria</td>
+        <td class="valor filete"><span class="sublinhado-duplo">${moeda(totalPrevisto)}</span></td>
+        <td class="valor"><span class="sublinhado-duplo">${moeda(totalExecutado)}</span></td>
+        <td class="valor"><span class="sublinhado-duplo">${moeda(totalPrevisto - totalExecutado)}</span></td>
+        <td class="valor">${(totalExecutado / totalPrevisto * 100).toFixed(1).replace('.', ',')}%</td>
+        <td class="valor">${comprov(totalComprov)}</td>
+      </tr>`;
+  </script>
+</body>
+</html>
