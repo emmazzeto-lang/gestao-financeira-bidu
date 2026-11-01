@@ -1,0 +1,190 @@
+/* Tema da Fundação Amigos de João Bidu sobre o Bootstrap 5.3 */
+
+:root {
+  --mesa: #E6EAF1;
+  --folha: #F7F9FC;
+  --cabecalho: #ECF0F7;
+  --pauta: #D8DFEA;
+  --pauta-forte: #BCC7D7;
+  --filete: #E07A9F;
+
+  --tinta: #141B2D;
+  --tinta-2: #465269;
+  --tinta-3: #555F73;
+
+  --azul: #1F4E9C;
+  --azul-escuro: #183F80;
+  --azul-claro: #E4ECF8;
+
+  --capa: #131F3D;
+  --capa-2: #1F2E57;
+  --capa-texto: #CBD5EA;
+  --capa-apagado: #8E9CBE;
+
+  --rosa: #C2185B;
+  --rosa-marca: #E8266A;
+  --vermelho: #B3261E;
+  --vermelho-claro: #FBE9E7;
+  --lapis: #7A5300;
+  --lapis-claro: #F8EED3;
+  --violeta: #5B3E9E;
+
+  --fonte-texto: 'Archivo', system-ui, sans-serif;
+  --fonte-numeros: 'Spline Sans Mono', ui-monospace, monospace;
+
+  /* Bootstrap */
+  --bs-body-font-family: var(--fonte-texto);
+  --bs-body-font-size: 0.875rem;
+  --bs-body-line-height: 1.43;
+  --bs-body-color: var(--tinta);
+  --bs-body-bg: var(--mesa);
+  --bs-secondary-color: var(--tinta-2);
+  --bs-tertiary-color: var(--tinta-3);
+  --bs-border-color: var(--pauta-forte);
+  --bs-border-radius: 6px;
+  --bs-border-radius-lg: 8px;
+  --bs-primary: #1F4E9C;
+  --bs-primary-rgb: 31, 78, 156;
+  --bs-danger: #B3261E;
+  --bs-danger-rgb: 179, 38, 30;
+  --bs-warning: #7A5300;
+  --bs-warning-rgb: 122, 83, 0;
+  --bs-success: #1F4E9C;
+  --bs-success-rgb: 31, 78, 156;
+  --bs-link-color: var(--azul);
+  --bs-link-color-rgb: 31, 78, 156;
+  --bs-link-hover-color: var(--azul-escuro);
+  --bs-link-hover-color-rgb: 24, 63, 128;
+  --bs-focus-ring-color: rgba(31, 78, 156, .3);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--azul-claro);
+  color: var(--tinta);
+}
+
+a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.btn {
+  --bs-btn-font-weight: 500;
+  --bs-btn-padding-y: .44rem;
+  --bs-btn-padding-x: .875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--azul);
+  --bs-btn-border-color: var(--azul);
+  --bs-btn-hover-bg: var(--azul-escuro);
+  --bs-btn-hover-border-color: var(--azul-escuro);
+  --bs-btn-active-bg: var(--azul-escuro);
+  --bs-btn-active-border-color: var(--azul-escuro);
+  --bs-btn-disabled-bg: var(--azul);
+  --bs-btn-disabled-border-color: var(--azul);
+  --bs-btn-disabled-opacity: .42;
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--tinta);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: var(--pauta-forte);
+  --bs-btn-hover-color: var(--tinta);
+  --bs-btn-hover-bg: var(--cabecalho);
+  --bs-btn-hover-border-color: var(--pauta-forte);
+  --bs-btn-active-color: var(--tinta);
+  --bs-btn-active-bg: var(--pauta);
+  --bs-btn-active-border-color: var(--pauta-forte);
+}
+
+.btn-link {
+  --bs-btn-color: var(--tinta-2);
+  --bs-btn-hover-color: var(--tinta);
+  text-decoration: none;
+}
+
+.btn-sm {
+  --bs-btn-padding-y: .28rem;
+  --bs-btn-padding-x: .625rem;
+  --bs-btn-font-size: .8125rem;
+}
+
+.form-label {
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--tinta-2);
+  margin-bottom: .375rem;
+}
+
+.form-control,
+.form-select {
+  font-size: .875rem;
+  padding: .5rem .75rem;
+  border-color: var(--pauta-forte);
+  background-color: #fff;
+}
+
+.form-control[readonly] {
+  background-color: var(--cabecalho);
+}
+
+.form-control::placeholder {
+  color: var(--tinta-3);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--azul);
+}
+
+.form-check-input:checked {
+  background-color: var(--azul);
+  border-color: var(--azul);
+}
+
+.alert {
+  font-size: .8125rem;
+  border: 0;
+}
+
+.alert-danger {
+  --bs-alert-bg: var(--vermelho-claro);
+  --bs-alert-color: #6E1A12;
+}
+
+.alert-warning {
+  --bs-alert-bg: var(--lapis-claro);
+  --bs-alert-color: #4E3600;
+}
+
+.offcanvas,
+.modal-content {
+  --bs-offcanvas-bg: var(--folha);
+  --bs-modal-bg: var(--folha);
+}
+
+.pagination {
+  --bs-pagination-color: var(--tinta-2);
+  --bs-pagination-border-color: transparent;
+  --bs-pagination-bg: transparent;
+  --bs-pagination-active-bg: var(--azul);
+  --bs-pagination-active-border-color: var(--azul);
+  --bs-pagination-hover-bg: var(--cabecalho);
+  --bs-pagination-font-size: .8rem;
+  font-family: var(--fonte-numeros);
+}
+
+.toast {
+  --bs-toast-bg: var(--tinta);
+  --bs-toast-color: #fff;
+  --bs-toast-border-color: transparent;
+}

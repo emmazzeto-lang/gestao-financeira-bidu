@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conciliação bancária - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="conciliacao">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Conciliação bancária</h1>
+            <p>Confira cada movimento do extrato contra o razão do sistema</p>
+          </div>
+          <div class="acoes">
+            <label class="btn btn-outline-secondary mb-0" for="arquivoOfx"><i class="bi bi-upload"></i> Importar extrato (OFX)</label>
+            <input class="d-none" type="file" id="arquivoOfx" accept=".ofx">
+            <button class="btn btn-primary" type="button" id="conciliar" disabled><i class="bi bi-check2"></i> <span>Conciliar selecionados</span></button>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <select class="form-select" aria-label="Conta">
+            <option>BB - CC 56789-0</option>
+            <option>Caixa - CC 11223-4</option>
+          </select>
+          <select class="form-select" aria-label="Período">
+            <option>Setembro/2026</option>
+            <option>Agosto/2026</option>
+          </select>
+          <span class="resumo" id="infoExtrato">Extrato OFX importado em 18/09/2026 às 09:12</span>
+        </div>
+
+        <div class="folha transporte">
+          <span class="termo">Saldo do extrato <span class="valor">313.397,65</span></span>
+          <span class="termo">- Saldo do razão <span class="valor">312.480,55</span></span>
+          <span class="termo resultado divergencia">= Diferença <span class="valor">917,10</span></span>
+        </div>
+        <p class="nota-transporte">A diferença vem da tarifa de 14/09 (- 42,90) ainda não lançada e dos uniformes de 08/09 (- 960,00) ainda não compensados.</p>
+
+        <section class="folha">
+          <div class="folha-topo flex-wrap">
+            <h2>Batimento extrato x razão</h2>
+            <div class="abas" id="abas">
+              <button type="button" class="ativa" data-filtro="">Todos <b>50</b></button>
+              <button type="button" data-filtro="ok">Conciliados <b>38</b></button>
+              <button type="button" data-filtro="sugestao">Sugestões <b>4</b></button>
+              <button type="button" data-filtro="divergencia">Divergências <b>8</b></button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="razao fixa" style="min-width: 1000px">
+              <colgroup>
+                <col style="width: 52px"><col style="width: 64px"><col><col style="width: 116px"><col style="width: 150px">
+                <col style="width: 68px"><col><col style="width: 116px"><col style="width: 124px">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th></th><th>Data</th><th>Extrato bancário</th><th class="valor">Valor</th><th>Situação</th>
+                  <th class="filete">Nº</th><th>Lançamento no sistema</th><th class="valor">Valor</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="movimentos"></tbody>
+            </table>
+          </div>
+
+          <div class="folha-rodape bg-transparent">
+            <span class="text-secondary" id="contagem"></span>
+            <nav class="ms-auto" aria-label="Páginas">
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item"><a class="page-link" href="#">8</a></li>
+              </ul>
+            </nav>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast" id="aviso" role="status">
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/conciliacao.js"></script>
+</body>
+</html>
