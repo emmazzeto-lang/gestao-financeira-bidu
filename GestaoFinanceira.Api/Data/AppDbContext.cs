@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using GestaoFinanceira.Api.Models;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GestaoFinanceira.Api.Data
 {
@@ -38,6 +39,30 @@ namespace GestaoFinanceira.Api.Data
             modelBuilder.Entity<Despesa>()
                 .Property(d => d.Valor)
                 .HasPrecision(18, 2);
+
+                var conversorUtc = new ValueConverter<DateTime, DateTime>(
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
+
+                var conversorUtcOpcional = new ValueConverter<DateTime?, DateTime?>(
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v,
+                    v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : v
+                );
+
+                foreach (var entidade in modelBuilder.Model.GetEntityTypes())
+                {
+                    foreach (var propriedade in entidade.GetProperties())
+                    {
+                        if (propriedade.ClrType == typeof(DateTime))
+
+                        propriedade.SetValueConverter(conversorUtc);
+
+                        else if (propriedade.ClrType == typeof(DateTime?))
+
+                        propriedade.SetValueConverter(conversorUtcOpcional);
+                    }
+                }
         }
     }
 }
