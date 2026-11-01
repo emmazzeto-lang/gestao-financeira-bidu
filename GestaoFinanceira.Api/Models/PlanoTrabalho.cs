@@ -14,6 +14,12 @@ namespace GestaoFinanceira.Api.Models
 
         public decimal ValorAprovado { get; set; }
 
+        // Todo plano nasce sem validação, só a diretoria valida
+
+        public bool Validado { get; set; } = false;
+
+        public DateTime? DataValidacao { get; set; }
+
         [Required]
         public int ParceriaId { get; set; }
         

@@ -136,6 +136,9 @@ namespace GestaoFinanceira.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("DataValidacao")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -143,6 +146,9 @@ namespace GestaoFinanceira.Api.Migrations
 
                     b.Property<int>("ParceriaId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Validado")
+                        .HasColumnType("boolean");
 
                     b.Property<decimal>("ValorAprovado")
                         .HasPrecision(18, 2)
