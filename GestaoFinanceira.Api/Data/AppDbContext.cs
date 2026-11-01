@@ -15,6 +15,8 @@ namespace GestaoFinanceira.Api.Data
         public DbSet<PlanoTrabalho> PlanosTrabalho { get; set; }
         public DbSet<Receita> Receitas { get; set; }
         public DbSet<Despesa> Despesas { get; set; }
+        public DbSet<FonteRecurso> FontesRecurso { get; set; }
+        public DbSet<Meta> Metas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +41,29 @@ namespace GestaoFinanceira.Api.Data
             modelBuilder.Entity<Despesa>()
                 .Property(d => d.Valor)
                 .HasPrecision(18, 2);
+
+                        modelBuilder.Entity<Meta>()
+                .Property(m => m.ValorPrevisto)
+                .HasPrecision(18, 2);
+
+            // Um plano tem várias metas; não deixa apagar um plano que tem metas
+            modelBuilder.Entity<Meta>()
+                .HasOne(m => m.PlanoTrabalho)
+                .WithMany(p => p.Metas)
+                .HasForeignKey(m => m.PlanoTrabalhoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Uma fonte paga várias metas; não deixa apagar uma fonte em uso
+            modelBuilder.Entity<Meta>()
+                .HasOne(m => m.FonteRecurso)
+                .WithMany()
+                .HasForeignKey(m => m.FonteRecursoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // O nome da fonte não pode se repetir
+            modelBuilder.Entity<FonteRecurso>()
+                .HasIndex(f => f.Nome)
+                .IsUnique();
 
                 var conversorUtc = new ValueConverter<DateTime, DateTime>(
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc),

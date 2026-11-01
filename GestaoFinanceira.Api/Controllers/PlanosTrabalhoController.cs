@@ -70,6 +70,7 @@ namespace GestaoFinanceira.Api.Controllers
             plano.Validado = false;
             plano.DataValidacao = null;
             plano.Parceria = null;
+            plano.Metas = new();
 
             _context.PlanosTrabalho.Add(plano);
             await _context.SaveChangesAsync();
@@ -88,6 +89,11 @@ namespace GestaoFinanceira.Api.Controllers
 
             if (plano.Validado)
                 return Conflict(new { mensagem = "Este plano já foi validado." });
+
+            var temMetas = await _context.Metas.AnyAsync(m => m.PlanoTrabalhoId == id);
+
+            if (!temMetas)
+                return BadRequest(new { mensagem = "Cadastre ao menos uma meta antes de validar o plano." });
 
             plano.Validado = true;
             plano.DataValidacao = DateTime.UtcNow;

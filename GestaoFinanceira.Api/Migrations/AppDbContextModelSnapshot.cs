@@ -76,6 +76,9 @@ namespace GestaoFinanceira.Api.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int?>("MetaId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PlanoTrabalhoId")
                         .HasColumnType("integer");
 
@@ -87,9 +90,67 @@ namespace GestaoFinanceira.Api.Migrations
 
                     b.HasIndex("ContaBancariaId");
 
+                    b.HasIndex("MetaId");
+
                     b.HasIndex("PlanoTrabalhoId");
 
                     b.ToTable("Despesas");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.FonteRecurso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Nome")
+                        .IsUnique();
+
+                    b.ToTable("FontesRecurso");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Meta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("FonteRecursoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlanoTrabalhoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("ValorPrevisto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FonteRecursoId");
+
+                    b.HasIndex("PlanoTrabalhoId");
+
+                    b.ToTable("Metas");
                 });
 
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Parceria", b =>
@@ -204,6 +265,10 @@ namespace GestaoFinanceira.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoFinanceira.Api.Models.Meta", "Meta")
+                        .WithMany()
+                        .HasForeignKey("MetaId");
+
                     b.HasOne("GestaoFinanceira.Api.Models.PlanoTrabalho", "PlanoTrabalho")
                         .WithMany()
                         .HasForeignKey("PlanoTrabalhoId")
@@ -211,6 +276,27 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("ContaBancaria");
+
+                    b.Navigation("Meta");
+
+                    b.Navigation("PlanoTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Meta", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.FonteRecurso", "FonteRecurso")
+                        .WithMany()
+                        .HasForeignKey("FonteRecursoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("GestaoFinanceira.Api.Models.PlanoTrabalho", "PlanoTrabalho")
+                        .WithMany("Metas")
+                        .HasForeignKey("PlanoTrabalhoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("FonteRecurso");
 
                     b.Navigation("PlanoTrabalho");
                 });
@@ -243,6 +329,11 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Navigation("ContaBancaria");
 
                     b.Navigation("PlanoTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.PlanoTrabalho", b =>
+                {
+                    b.Navigation("Metas");
                 });
 #pragma warning restore 612, 618
         }
