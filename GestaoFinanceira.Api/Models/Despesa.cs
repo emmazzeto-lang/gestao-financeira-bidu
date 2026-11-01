@@ -28,5 +28,12 @@ namespace GestaoFinanceira.Api.Models
         
         [ForeignKey("PlanoTrabalhoId")]
         public PlanoTrabalho? PlanoTrabalho { get; set; }
+
+        // Por enquanto opcional para não quebrar as despesas que já existem no banco.
+        // No passo 3 o serviço de despesas passa a exigir a meta.
+        public int? MetaId { get; set; }
+
+        [ForeignKey("MetaId")]
+        public Meta? Meta { get; set; }
     }
 }

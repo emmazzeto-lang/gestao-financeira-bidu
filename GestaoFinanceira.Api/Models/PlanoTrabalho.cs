@@ -20,6 +20,9 @@ namespace GestaoFinanceira.Api.Models
 
         public DateTime? DataValidacao { get; set; }
 
+        // Um plano tem várias metas (relacionamento 1 para N)
+        public List<Meta> Metas { get; set; } = new();
+
         [Required]
         public int ParceriaId { get; set; }
         
