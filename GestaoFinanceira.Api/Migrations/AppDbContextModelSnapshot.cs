@@ -241,6 +241,9 @@ namespace GestaoFinanceira.Api.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int?>("FonteRecursoId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("PlanoTrabalhoId")
                         .HasColumnType("integer");
 
@@ -251,6 +254,8 @@ namespace GestaoFinanceira.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("FonteRecursoId");
 
                     b.HasIndex("PlanoTrabalhoId");
 
@@ -320,6 +325,10 @@ namespace GestaoFinanceira.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoFinanceira.Api.Models.FonteRecurso", "FonteRecurso")
+                        .WithMany()
+                        .HasForeignKey("FonteRecursoId");
+
                     b.HasOne("GestaoFinanceira.Api.Models.PlanoTrabalho", "PlanoTrabalho")
                         .WithMany()
                         .HasForeignKey("PlanoTrabalhoId")
@@ -327,6 +336,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("ContaBancaria");
+
+                    b.Navigation("FonteRecurso");
 
                     b.Navigation("PlanoTrabalho");
                 });

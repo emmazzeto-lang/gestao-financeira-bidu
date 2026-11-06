@@ -28,5 +28,12 @@ namespace GestaoFinanceira.Api.Models
         
         [ForeignKey("PlanoTrabalhoId")]
         public PlanoTrabalho? PlanoTrabalho { get; set; }
+
+        // Opcional no banco para não quebrar receitas antigas; o serviço passa a exigir.
+        public int? FonteRecursoId { get; set; }
+
+        [ForeignKey("FonteRecursoId")]
+        public FonteRecurso? FonteRecurso { get; set; }
+    
     }
 }
