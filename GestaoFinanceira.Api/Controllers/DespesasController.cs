@@ -3,6 +3,7 @@ using GestaoFinanceira.Api.Data;
 using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using GestaoFinanceira.Api.Services;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -11,10 +12,12 @@ namespace GestaoFinanceira.Api.Controllers
     public class DespesasController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly DespesaService _despesaService;
 
-        public DespesasController(AppDbContext context)
+        public DespesasController(AppDbContext context, DespesaService despesaService)
         {
             _context = context;
+            _despesaService = despesaService;
         }
 
         // GET: api/Despesas
@@ -25,6 +28,7 @@ namespace GestaoFinanceira.Api.Controllers
                 .AsNoTracking()
                 .Include(d => d.ContaBancaria)
                 .Include(d => d.PlanoTrabalho)
+                .Include(d => d.Meta)
                 .ToListAsync();
         }
 
@@ -36,6 +40,7 @@ namespace GestaoFinanceira.Api.Controllers
                 .AsNoTracking()
                 .Include(d => d.ContaBancaria)
                 .Include(d => d.PlanoTrabalho)
+                .Include(d => d.Meta)
                 .FirstOrDefaultAsync(d => d.Id == id);
 
             if (despesa == null)
@@ -49,33 +54,15 @@ namespace GestaoFinanceira.Api.Controllers
         public async Task<ActionResult<Despesa>> PostDespesa(
             [FromBody] Despesa despesa)
         {
-            if (despesa.Valor <= 0)
-                return BadRequest(new
-                {
-                    mensagem = "O valor da despesa deve ser maior que zero."
-                });
+            var erro = await _despesaService.ValidarAsync(despesa);
 
-            var contaExiste = await _context.ContasBancarias
-                .AnyAsync(c => c.Id == despesa.ContaBancariaId);
-
-            if (!contaExiste)
-                return BadRequest(new
-                {
-                    mensagem = "A conta bancária informada não existe."
-                });
-
-            var planoExiste = await _context.PlanosTrabalho
-                .AnyAsync(p => p.Id == despesa.PlanoTrabalhoId);
-
-            if (!planoExiste)
-                return BadRequest(new
-                {
-                    mensagem = "O plano de trabalho informado não existe."
-                });
+            if (erro != null)
+                return BadRequest(new { mensagem = erro });
 
             // Evita inserir objetos relacionados enviados no JSON.
             despesa.ContaBancaria = null;
             despesa.PlanoTrabalho = null;
+            despesa.Meta = null;
 
             _context.Despesas.Add(despesa);
             await _context.SaveChangesAsync();
@@ -97,40 +84,22 @@ namespace GestaoFinanceira.Api.Controllers
                     mensagem = "O ID da rota é diferente do ID da despesa."
                 });
 
-            if (despesa.Valor <= 0)
-                return BadRequest(new
-                {
-                    mensagem = "O valor da despesa deve ser maior que zero."
-                });
-
             var existente = await _context.Despesas.FindAsync(id);
 
             if (existente == null)
                 return NotFound(new { mensagem = "Despesa não encontrada." });
 
-            var contaExiste = await _context.ContasBancarias
-                .AnyAsync(c => c.Id == despesa.ContaBancariaId);
+            var erro = await _despesaService.ValidarAsync(despesa, id);
 
-            if (!contaExiste)
-                return BadRequest(new
-                {
-                    mensagem = "A conta bancária informada não existe."
-                });
-
-            var planoExiste = await _context.PlanosTrabalho
-                .AnyAsync(p => p.Id == despesa.PlanoTrabalhoId);
-
-            if (!planoExiste)
-                return BadRequest(new
-                {
-                    mensagem = "O plano de trabalho informado não existe."
-                });
+            if (erro != null)
+                return BadRequest(new { mensagem = erro });
 
             existente.Descricao = despesa.Descricao;
             existente.Valor = despesa.Valor;
             existente.DataPagamento = despesa.DataPagamento;
             existente.ContaBancariaId = despesa.ContaBancariaId;
             existente.PlanoTrabalhoId = despesa.PlanoTrabalhoId;
+            existente.MetaId = despesa.MetaId;
 
             await _context.SaveChangesAsync();
 
