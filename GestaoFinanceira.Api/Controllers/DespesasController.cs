@@ -119,6 +119,12 @@ namespace GestaoFinanceira.Api.Controllers
             if (despesa == null)
                 return NotFound(new { mensagem = "Despesa não encontrada." });
 
+            var temComprovante = await _context.Documentos
+                .AnyAsync(d => d.DespesaId == id);
+
+            if (temComprovante)
+                return Conflict(new { mensagem = "Remova os comprovantes antes de excluir a despesa." });
+
             _context.Despesas.Remove(despesa);
             await _context.SaveChangesAsync();
 

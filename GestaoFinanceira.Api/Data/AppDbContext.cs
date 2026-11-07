@@ -18,6 +18,7 @@ namespace GestaoFinanceira.Api.Data
         public DbSet<FonteRecurso> FontesRecurso { get; set; }
         public DbSet<Meta> Metas { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
+        public DbSet<Documento> Documentos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -76,6 +77,15 @@ namespace GestaoFinanceira.Api.Data
                 .WithMany()
                 .HasForeignKey(d => d.FornecedorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Não deixa apagar uma despesa que tem comprovantes
+            modelBuilder.Entity<Documento>()
+                .HasOne(d => d.Despesa)
+                .WithMany()
+                .HasForeignKey(d => d.DespesaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                
                 var conversorUtc = new ValueConverter<DateTime, DateTime>(
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
