@@ -13,6 +13,7 @@ builder.Services.AddScoped<DespesaService>();
 builder.Services.AddScoped<ReceitaService>();
 builder.Services.AddScoped<DocumentoService>();
 builder.Services.AddScoped<ConciliacaoService>();
+builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

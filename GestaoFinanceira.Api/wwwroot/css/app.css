@@ -1162,3 +1162,21 @@
     display: none;
   }
 }
+
+/* ---------- Impressão ---------- */
+
+/* Ao imprimir (ou salvar como PDF) fica só o relatório, sem menu e botões */
+@media print {
+  .lateral,
+  .topo,
+  .barra-inferior,
+  .cabecalho-pagina .acoes,
+  .filtros,
+  .so-tela {
+    display: none !important;
+  }
+
+  .table-responsive {
+    overflow: visible;
+  }
+}
