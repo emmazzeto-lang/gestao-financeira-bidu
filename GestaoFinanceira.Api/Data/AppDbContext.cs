@@ -19,6 +19,7 @@ namespace GestaoFinanceira.Api.Data
         public DbSet<Meta> Metas { get; set; }
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Documento> Documentos { get; set; }
+        public DbSet<MovimentoExtrato> MovimentosExtrato { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,6 +84,37 @@ namespace GestaoFinanceira.Api.Data
                 .HasOne(d => d.Despesa)
                 .WithMany()
                 .HasForeignKey(d => d.DespesaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MovimentoExtrato>()
+                .Property(m => m.Valor)
+                .HasPrecision(18, 2);
+
+            // O mesmo movimento do banco não entra duas vezes na mesma conta
+            modelBuilder.Entity<MovimentoExtrato>()
+                .HasIndex(m => new { m.ContaBancariaId, m.IdBanco })
+                .IsUnique();
+
+            // Cada despesa e cada receita é conciliada com um movimento só
+            modelBuilder.Entity<MovimentoExtrato>()
+                .HasIndex(m => m.DespesaId)
+                .IsUnique();
+
+            modelBuilder.Entity<MovimentoExtrato>()
+                .HasIndex(m => m.ReceitaId)
+                .IsUnique();
+
+            // Não deixa apagar uma despesa ou receita já conciliada
+            modelBuilder.Entity<MovimentoExtrato>()
+                .HasOne(m => m.Despesa)
+                .WithMany()
+                .HasForeignKey(m => m.DespesaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MovimentoExtrato>()
+                .HasOne(m => m.Receita)
+                .WithMany()
+                .HasForeignKey(m => m.ReceitaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
                 

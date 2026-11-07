@@ -12,6 +12,7 @@ builder.Services.AddControllers().AddJsonOptions(o => o.JsonSerializerOptions.Re
 builder.Services.AddScoped<DespesaService>();
 builder.Services.AddScoped<ReceitaService>();
 builder.Services.AddScoped<DocumentoService>();
+builder.Services.AddScoped<ConciliacaoService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -31,32 +31,25 @@
         </div>
 
         <div class="filtros">
-          <select class="form-select" aria-label="Conta">
-            <option>BB - CC 56789-0</option>
-            <option>Caixa - CC 11223-4</option>
-          </select>
-          <select class="form-select" aria-label="Período">
-            <option>Setembro/2026</option>
-            <option>Agosto/2026</option>
-          </select>
-          <span class="resumo" id="infoExtrato">Extrato OFX importado em 18/09/2026 às 09:12</span>
-        </div>
+          <select class="form-select" id="conta" aria-label="Conta"></select>
+          <input class="form-control" type="month" id="periodo" aria-label="Período" style="max-width: 180px">
+          <span class="resumo" id="infoExtrato"></span>
 
         <div class="folha transporte">
-          <span class="termo">Saldo do extrato <span class="valor">313.397,65</span></span>
-          <span class="termo">- Saldo do razão <span class="valor">312.480,55</span></span>
-          <span class="termo resultado divergencia">= Diferença <span class="valor">917,10</span></span>
+          <span class="termo">Movimento do extrato <span class="valor" id="totalExtrato">-</span></span>
+          <span class="termo">- Lançado no sistema <span class="valor" id="totalSistema">-</span></span>
+          <span class="termo resultado" id="termoDiferenca">= Diferença <span class="valor" id="diferenca">-</span></span>
         </div>
-        <p class="nota-transporte">A diferença vem da tarifa de 14/09 (- 42,90) ainda não lançada e dos uniformes de 08/09 (- 960,00) ainda não compensados.</p>
+        <p class="nota-transporte" id="notaDiferenca"></p>
 
         <section class="folha">
           <div class="folha-topo flex-wrap">
             <h2>Batimento extrato x razão</h2>
             <div class="abas" id="abas">
-              <button type="button" class="ativa" data-filtro="">Todos <b>50</b></button>
-              <button type="button" data-filtro="ok">Conciliados <b>38</b></button>
-              <button type="button" data-filtro="sugestao">Sugestões <b>4</b></button>
-              <button type="button" data-filtro="divergencia">Divergências <b>8</b></button>
+              <button type="button" class="ativa" data-filtro="">Todos <b id="qtdTodos">0</b></button>
+              <button type="button" data-filtro="conciliado">Conciliados <b id="qtdConciliados">0</b></button>
+              <button type="button" data-filtro="sugestao">Sugestões <b id="qtdSugestoes">0</b></button>
+              <button type="button" data-filtro="divergencia">Divergências <b id="qtdDivergencias">0</b></button>
             </div>
           </div>
 
@@ -78,15 +71,6 @@
 
           <div class="folha-rodape bg-transparent">
             <span class="text-secondary" id="contagem"></span>
-            <nav class="ms-auto" aria-label="Páginas">
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item disabled"><span class="page-link">...</span></li>
-                <li class="page-item"><a class="page-link" href="#">8</a></li>
-              </ul>
-            </nav>
           </div>
         </section>
 
@@ -105,6 +89,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/conciliacao.js"></script>
 </body>

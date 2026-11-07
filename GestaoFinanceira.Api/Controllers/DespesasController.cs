@@ -125,6 +125,12 @@ namespace GestaoFinanceira.Api.Controllers
             if (temComprovante)
                 return Conflict(new { mensagem = "Remova os comprovantes antes de excluir a despesa." });
 
+            var conciliada = await _context.MovimentosExtrato
+                .AnyAsync(m => m.DespesaId == id);
+
+            if (conciliada)
+                return Conflict(new { mensagem = "Desfaça a conciliação antes de excluir a despesa." });
+
             _context.Despesas.Remove(despesa);
             await _context.SaveChangesAsync();
 
