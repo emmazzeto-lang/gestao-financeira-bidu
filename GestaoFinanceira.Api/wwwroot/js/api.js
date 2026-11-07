@@ -26,7 +26,8 @@ async function apiPost(rota, corpo) {
   });
 
   if (!resposta.ok) throw new Error(await lerErro(resposta, `Erro ${resposta.status} ao salvar`));
-  return resposta.json();
+  // 204 (No Content) não tem corpo para ler
+  return resposta.status === 204 ? null : resposta.json();
 }
 
 // Para arquivos: o navegador monta o multipart sozinho a partir do FormData

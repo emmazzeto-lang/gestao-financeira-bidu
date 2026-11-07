@@ -236,6 +236,54 @@ namespace GestaoFinanceira.Api.Migrations
                     b.ToTable("Metas");
                 });
 
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.MovimentoExtrato", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContaBancariaId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("DespesaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IdBanco")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("ReceitaId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DespesaId")
+                        .IsUnique();
+
+                    b.HasIndex("ReceitaId")
+                        .IsUnique();
+
+                    b.HasIndex("ContaBancariaId", "IdBanco")
+                        .IsUnique();
+
+                    b.ToTable("MovimentosExtrato");
+                });
+
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Parceria", b =>
                 {
                     b.Property<int>("Id")
@@ -405,6 +453,31 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Navigation("FonteRecurso");
 
                     b.Navigation("PlanoTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.MovimentoExtrato", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.ContaBancaria", "ContaBancaria")
+                        .WithMany()
+                        .HasForeignKey("ContaBancariaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GestaoFinanceira.Api.Models.Despesa", "Despesa")
+                        .WithMany()
+                        .HasForeignKey("DespesaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("GestaoFinanceira.Api.Models.Receita", "Receita")
+                        .WithMany()
+                        .HasForeignKey("ReceitaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ContaBancaria");
+
+                    b.Navigation("Despesa");
+
+                    b.Navigation("Receita");
                 });
 
             modelBuilder.Entity("GestaoFinanceira.Api.Models.PlanoTrabalho", b =>
