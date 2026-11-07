@@ -45,6 +45,17 @@ namespace GestaoFinanceira.Api.Controllers
                 .ToListAsync();
         }
 
+        // GET: api/Documentos/repetido?tipo=NF-e&numero=004512&fornecedorId=1
+        [HttpGet("repetido")]
+        public async Task<IActionResult> GetRepetido(
+            [FromQuery] string tipo, [FromQuery] string numero, [FromQuery] int? fornecedorId)
+        {
+            var repetido = await _documentoService.BuscarRepetidoAsync(tipo, numero, fornecedorId);
+
+            // despesaId vem nulo quando o documento ainda não foi usado
+            return Ok(new { despesaId = repetido?.DespesaId });
+        }
+
         // GET: api/Documentos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Documento>> GetDocumento(int id)

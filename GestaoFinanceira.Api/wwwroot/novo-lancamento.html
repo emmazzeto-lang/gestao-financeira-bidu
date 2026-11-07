@@ -21,14 +21,14 @@
         <div class="cabecalho-pagina">
           <div>
             <h1>Novo lançamento</h1>
-            <p>Registrado no razão de setembro - TF 012/2025</p>
+            <p>A despesa só é registrada junto com o comprovante</p>
           </div>
         </div>
 
         <div class="d-flex gap-4 colunas align-items-start">
           <form class="folha flex-grow-1" id="formLancamento" novalidate style="min-width: 0">
             <div class="folha-topo">
-              <h2>Despesa Nº <span id="numeroLancamento">1042</span></h2>
+              <h2>Nova despesa</h2>
               <div class="btn-group tipo-lancamento" role="group" aria-label="Tipo de lançamento">
                 <input type="radio" class="btn-check" name="tipo" id="tipoReceita" value="receita">
                 <label class="btn btn-outline-secondary" for="tipoReceita">Receita</label>
@@ -67,23 +67,15 @@
               <div class="row g-3 mt-0">
                 <div class="col-md-8">
                   <label class="form-label" for="fornecedor">Fornecedor</label>
-                  <select class="form-select" id="fornecedor" required>
-                    <option value="">Selecione...</option>
-                    <option value="75.315.333/0001-09" selected>Atacadão Distribuidora Ltda.</option>
-                    <option value="12.345.678/0001-90">Papelaria Central Ltda.</option>
-                    <option value="98.765.432/0001-10">Ana Lima (MEI)</option>
-                  </select>
+                  <select class="form-select" id="fornecedor"></select>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label" for="cnpj">CNPJ</label>
+                  <label class="form-label" for="cnpj">CPF/CNPJ</label>
                   <input class="form-control" id="cnpj" readonly>
                 </div>
                 <div class="col-md-8">
                   <label class="form-label" for="conta">Conta bancária</label>
-                  <select class="form-select" id="conta" required>
-                    <option value="1" selected>BB - Ag 1234 - CC 56789-0</option>
-                    <option value="2">Caixa - Ag 0987 - CC 11223-4</option>
-                  </select>
+                  <select class="form-select" id="conta" required></select>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label" for="formaPagamento">Forma de pagamento</label>
@@ -126,10 +118,10 @@
                 <div class="col-md-8">
                   <label class="form-label" for="tipoDocumento">Tipo de documento</label>
                   <select class="form-select" id="tipoDocumento">
-                    <option>Nota fiscal eletrônica (NF-e)</option>
-                    <option>Nota fiscal de serviço (NFS-e)</option>
-                    <option>Recibo</option>
-                    <option>Cupom fiscal</option>
+                    <option value="NF-e">Nota fiscal eletrônica (NF-e)</option>
+                    <option value="NFS-e">Nota fiscal de serviço (NFS-e)</option>
+                    <option value="Recibo">Recibo</option>
+                    <option value="Cupom fiscal">Cupom fiscal</option>
                   </select>
                 </div>
                 <div class="col-md-4">
@@ -144,9 +136,8 @@
             </div>
 
             <div class="rodape-form">
-              <span class="salvo" id="statusRascunho">Rascunho não salvo</span>
+              <span class="salvo" id="statusEnvio"></span>
               <a class="btn btn-link" href="painel.html">Cancelar</a>
-              <button class="btn btn-outline-secondary" type="button" id="salvarRascunho">Salvar rascunho</button>
               <button class="btn btn-primary" type="submit" id="registrar" disabled><i class="bi bi-check2"></i> Registrar despesa</button>
             </div>
           </form>
@@ -195,6 +186,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/novo-lancamento.js"></script>
 </body>

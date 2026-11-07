@@ -68,16 +68,7 @@ namespace GestaoFinanceira.Api.Services
             if (!await TemAssinaturaAsync(arquivo, formato.Assinatura))
                 return (null, "O conteúdo do arquivo não corresponde à extensão informada.");
 
-            // A mesma nota não comprova dois gastos. Dois fornecedores podem usar
-            // o mesmo número, então a comparação considera também o fornecedor.
-            var numeroSemZeros = numero.TrimStart('0');
-
-            var repetido = await _context.Documentos
-                .AsNoTracking()
-                .Where(d => d.Tipo == tipo
-                    && d.Numero.TrimStart('0') == numeroSemZeros
-                    && d.Despesa!.FornecedorId == despesa.FornecedorId)
-                .FirstOrDefaultAsync();
+            var repetido = await BuscarRepetidoAsync(tipo, numero, despesa.FornecedorId);
 
             if (repetido != null)
                 return (null, $"Este documento já comprova a despesa Nº {repetido.DespesaId}.");
@@ -118,6 +109,21 @@ namespace GestaoFinanceira.Api.Services
             }
 
             return (documento, null);
+        }
+
+        // A mesma nota não comprova dois gastos. Dois fornecedores podem usar
+        // o mesmo número, então a comparação considera também o fornecedor.
+        public async Task<Documento?> BuscarRepetidoAsync(string tipo, string numero, int? fornecedorId)
+        {
+            tipo = tipo.Trim();
+            var numeroSemZeros = numero.Trim().TrimStart('0');
+
+            return await _context.Documentos
+                .AsNoTracking()
+                .Where(d => d.Tipo == tipo
+                    && d.Numero.TrimStart('0') == numeroSemZeros
+                    && d.Despesa!.FornecedorId == fornecedorId)
+                .FirstOrDefaultAsync();
         }
 
         public string CaminhoDoArquivo(Documento documento)

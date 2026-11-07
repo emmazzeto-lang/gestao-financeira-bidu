@@ -1,70 +1,102 @@
-// Dados de exemplo enquanto a API não tem os endpoints de planos, metas e despesas.
-const cadastro = {
-  parcerias: [
-    {
-      id: 1, nome: 'TF 012/2025 - Prefeitura Municipal',
-      planos: [{
-        id: 1, nome: 'Plano 2025/2027', validado: true, validadoEm: '12/02/2025',
-        fontes: [
-          { id: 1, nome: 'Recurso público municipal', metas: [1, 2] },
-          { id: 2, nome: 'Recursos próprios', metas: [3] },
-          { id: 3, nome: 'Doações privadas', metas: [4] }
-        ],
-        metas: [
-          { id: 1, nome: 'Meta 1 - Alimentação', previsto: 720000, executado: 561600 },
-          { id: 2, nome: 'Meta 2 - Educação', previsto: 540000, executado: 291600 },
-          { id: 3, nome: 'Meta 3 - Saúde', previsto: 300000, executado: 273000 },
-          { id: 4, nome: 'Meta 4 - Infraestrutura', previsto: 240000, executado: 76800 }
-        ]
-      }]
-    },
-    {
-      id: 2, nome: 'CV 021/2026 - Fundo Municipal da Criança',
-      planos: [{ id: 2, nome: 'Plano 2026/2027', validado: false, fontes: [], metas: [] }]
-    }
-  ],
-  documentosUsados: { '004512': 1041, '88120': 1038 }
-};
+// Lançamento de despesa ligado à API: a despesa só fica gravada junto com o comprovante
 
 const $ = id => document.getElementById(id);
 
 const campos = {
   parceria: $('parceria'), plano: $('plano'), fonte: $('fonte'), meta: $('meta'),
-  fornecedor: $('fornecedor'), cnpj: $('cnpj'), data: $('data'), competencia: $('competencia'),
-  valor: $('valor'), historico: $('historico'), comprovante: $('comprovante'), numeroDocumento: $('numeroDocumento')
+  fornecedor: $('fornecedor'), cnpj: $('cnpj'), conta: $('conta'), data: $('data'),
+  competencia: $('competencia'), valor: $('valor'), historico: $('historico'),
+  comprovante: $('comprovante'), tipoDocumento: $('tipoDocumento'), numeroDocumento: $('numeroDocumento')
 };
 
+let planos = [];
+let metas = [];
+let fornecedores = [];
 let arquivo = null;
+let docUsadoEm = null;
+let salvando = false;
 
 function opcoes(select, itens, textoVazio) {
   select.innerHTML = itens.length
-    ? itens.map(i => `<option value="${i.id}">${escaparHtml(i.nome)}${i.validado === false ? ' - aguardando validação' : i.validado ? ' - validado' : ''}</option>`).join('')
+    ? itens.map(i => `<option value="${i.id}">${escaparHtml(i.texto)}</option>`).join('')
     : `<option value="">${textoVazio}</option>`;
 }
 
-function parceriaAtual() { return cadastro.parcerias.find(p => p.id == campos.parceria.value); }
-function planoAtual() { return parceriaAtual()?.planos.find(p => p.id == campos.plano.value); }
-function fonteAtual() { return planoAtual()?.fontes.find(f => f.id == campos.fonte.value); }
-function metaAtual() { return planoAtual()?.metas.find(m => m.id == campos.meta.value); }
+function planoAtual() { return planos.find(p => p.id == campos.plano.value); }
+function metaAtual() { return metas.find(m => m.id == campos.meta.value); }
+function fornecedorAtual() { return fornecedores.find(f => f.id == campos.fornecedor.value); }
 
-function atualizarPlanos() {
-  opcoes(campos.plano, parceriaAtual()?.planos ?? [], 'Nenhum plano');
-  atualizarFontes();
+// "75315333000109" -> "75.315.333/0001-09"
+function formatarDocumento(numeros) {
+  if (!numeros) return '';
+  return numeros.length === 14
+    ? numeros.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
+    : numeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
 }
 
-function atualizarFontes() {
-  const plano = planoAtual();
-  opcoes(campos.fonte, plano?.validado ? plano.fontes : [], 'Plano ainda não validado');
-  atualizarMetas();
+// ---------- Cadastros vindos da API ----------
+
+async function carregarCadastros() {
+  const [parcerias, listaFornecedores, contas] = await Promise.all([
+    apiGet('Parcerias'),
+    apiGet('Fornecedores'),
+    apiGet('ContasBancarias')
+  ]);
+
+  fornecedores = listaFornecedores;
+
+  opcoes(campos.parceria,
+    parcerias.map(p => ({ id: p.id, texto: `${p.termoFomento} - ${p.nome}` })),
+    'Nenhuma parceria cadastrada');
+
+  campos.fornecedor.innerHTML = '<option value="">Sem fornecedor</option>' +
+    fornecedores.map(f => `<option value="${f.id}">${escaparHtml(f.nome)}</option>`).join('');
+
+  opcoes(campos.conta,
+    contas.filter(c => c.ativo).map(c => ({ id: c.id, texto: `${c.nomeBanco} - Ag ${c.agencia} - CC ${c.numeroConta}` })),
+    'Nenhuma conta cadastrada');
+
+  await atualizarPlanos();
 }
 
-function atualizarMetas() {
+async function atualizarPlanos() {
+  planos = campos.parceria.value
+    ? await apiGet(`PlanosTrabalho?parceriaId=${campos.parceria.value}`)
+    : [];
+
+  opcoes(campos.plano,
+    planos.map(p => ({ id: p.id, texto: `${p.descricao} - ${p.validado ? 'validado' : 'aguardando validação'}` })),
+    'Nenhum plano');
+
+  await atualizarMetas();
+}
+
+// Busca as metas do plano com o quanto já foi gasto em cada uma
+async function atualizarMetas() {
   const plano = planoAtual();
-  const fonte = fonteAtual();
-  const metas = plano && fonte ? plano.metas.filter(m => fonte.metas.includes(m.id)) : [];
-  opcoes(campos.meta, metas, '-');
+  metas = plano?.validado ? await apiGet(`Metas/execucao?planoTrabalhoId=${plano.id}`) : [];
+
+  // As fontes saem das próprias metas do plano, sem repetir
+  const fontes = [...new Map(metas.map(m => [m.fonteRecursoId, { id: m.fonteRecursoId, texto: m.fonteRecurso }])).values()];
+
+  const fonteEscolhida = campos.fonte.value;
+  opcoes(campos.fonte, fontes, plano ? 'Plano ainda não validado' : '-');
+  if (fontes.some(f => f.id == fonteEscolhida)) campos.fonte.value = fonteEscolhida;
+
+  atualizarListaMetas();
+}
+
+function atualizarListaMetas() {
+  const daFonte = metas.filter(m => m.fonteRecursoId == campos.fonte.value);
+
+  const metaEscolhida = campos.meta.value;
+  opcoes(campos.meta, daFonte.map(m => ({ id: m.id, texto: m.descricao })), '-');
+  if (daFonte.some(m => m.id == metaEscolhida)) campos.meta.value = metaEscolhida;
+
   conferir();
 }
+
+// ---------- Comprovante ----------
 
 function mostrarArquivo() {
   const area = $('arquivoAnexado');
@@ -79,7 +111,7 @@ function mostrarArquivo() {
       <i class="bi bi-file-earmark-text"></i>
       <div class="flex-grow-1 text-truncate">
         <div class="nome text-truncate">${escaparHtml(arquivo.name)}</div>
-        <small>${kb} KB - enviado agora</small>
+        <small>${kb} KB - enviado junto com a despesa</small>
       </div>
       <button class="btn btn-link btn-sm" type="button" id="removerArquivo" aria-label="Remover arquivo"><i class="bi bi-x-lg"></i></button>
     </div>`;
@@ -106,26 +138,54 @@ function receberArquivo(novo) {
   conferir();
 }
 
+// Pergunta à API se o documento já comprova outra despesa.
+// Espera a pessoa parar de digitar para não chamar a API a cada tecla.
+let esperaDocumento;
+
+function verificarDocumento() {
+  clearTimeout(esperaDocumento);
+  docUsadoEm = null;
+
+  const numero = campos.numeroDocumento.value.trim();
+  if (!numero) {
+    conferir();
+    return;
+  }
+
+  esperaDocumento = setTimeout(async () => {
+    const parametros = new URLSearchParams({ tipo: campos.tipoDocumento.value, numero });
+    if (campos.fornecedor.value) parametros.append('fornecedorId', campos.fornecedor.value);
+
+    try {
+      const resposta = await apiGet(`Documentos/repetido?${parametros}`);
+      // só vale se o número não mudou enquanto a API respondia
+      if (campos.numeroDocumento.value.trim() === numero) docUsadoEm = resposta.despesaId;
+    } catch (erro) {
+      console.error(erro);
+    }
+    conferir();
+  }, 400);
+}
+
+// ---------- Conferência ----------
+
 function conferir() {
   const plano = planoAtual();
-  const fonte = fonteAtual();
   const meta = metaAtual();
   const valor = lerMoeda(campos.valor.value);
-  const numeroDoc = campos.numeroDocumento.value.trim().replace(/^0+/, '');
-  const docUsadoEm = Object.entries(cadastro.documentosUsados)
-    .find(([doc]) => doc.replace(/^0+/, '') === numeroDoc)?.[1];
+  const numeroDoc = campos.numeroDocumento.value.trim();
 
-  const disponivelAntes = meta ? meta.previsto - meta.executado : 0;
+  const disponivelAntes = meta ? meta.valorPrevisto - meta.executado : 0;
 
   const itens = [
     { ok: !!plano?.validado, texto: plano?.validado ? 'Parceria com plano de trabalho validado' : 'O plano de trabalho desta parceria ainda não foi validado' },
     { ok: !!meta, texto: 'Meta pertence ao plano selecionado' },
-    { ok: !!(fonte && meta && fonte.metas.includes(meta.id)), texto: 'Fonte de recurso cobre a meta' },
+    { ok: !!meta && meta.fonteRecursoId == campos.fonte.value, texto: 'Fonte de recurso cobre a meta' },
     {
       ok: !!arquivo && !!numeroDoc && !docUsadoEm,
       erro: !!docUsadoEm,
       texto: docUsadoEm
-        ? `Comprovante único: documento ${campos.numeroDocumento.value} já usado no Nº ${docUsadoEm}`
+        ? `Comprovante único: documento ${numeroDoc} já usado na despesa Nº ${docUsadoEm}`
         : 'Comprovante anexado e numerado'
     },
     {
@@ -149,18 +209,18 @@ function conferir() {
   const aviso = $('avisoDuplicado');
   if (docUsadoEm) {
     aviso.querySelector('span').innerHTML =
-      `Este documento já comprova o lançamento <b>Nº ${docUsadoEm}</b>. Anexe o documento correto ou confira o lançamento anterior.`;
+      `Este documento já comprova a despesa <b>Nº ${docUsadoEm}</b>. Anexe o documento correto ou confira a despesa anterior.`;
     aviso.classList.remove('d-none');
   } else {
     aviso.classList.add('d-none');
   }
 
-  $('tituloEfeito').textContent = meta ? `Efeito na ${meta.nome.split(' - ')[0]}` : 'Efeito na meta';
+  $('tituloEfeito').textContent = meta ? `Efeito na ${meta.descricao.split(' - ')[0]}` : 'Efeito na meta';
   if (meta) {
     const esta = valor > 0 ? valor : 0;
-    const depois = meta.previsto - meta.executado - esta;
-    const pct = (meta.executado + esta) / meta.previsto * 100;
-    $('efeitoPrevisto').textContent = moeda(meta.previsto);
+    const depois = meta.valorPrevisto - meta.executado - esta;
+    const pct = (meta.executado + esta) / meta.valorPrevisto * 100;
+    $('efeitoPrevisto').textContent = moeda(meta.valorPrevisto);
     $('efeitoExecutado').textContent = `- ${moeda(meta.executado)}`;
     $('efeitoEsta').textContent = `- ${moeda(esta)}`;
     $('efeitoDisponivel').textContent = moeda(depois);
@@ -172,8 +232,8 @@ function conferir() {
     $('efeitoPercentual').textContent = '';
   }
 
-  const camposPreenchidos = campos.data.value && campos.competencia.value && campos.historico.value.trim() && campos.fornecedor.value;
-  $('registrar').disabled = !(passaram === itens.length && camposPreenchidos);
+  const camposPreenchidos = campos.data.value && campos.competencia.value && campos.historico.value.trim() && campos.conta.value;
+  $('registrar').disabled = salvando || !(passaram === itens.length && camposPreenchidos);
 }
 
 function mostrarAviso(texto) {
@@ -182,12 +242,36 @@ function mostrarAviso(texto) {
   bootstrap.Toast.getOrCreateInstance(toast).show();
 }
 
-campos.parceria.addEventListener('change', atualizarPlanos);
-campos.plano.addEventListener('change', atualizarFontes);
-campos.fonte.addEventListener('change', atualizarMetas);
-campos.fornecedor.addEventListener('change', () => { campos.cnpj.value = campos.fornecedor.value; conferir(); });
+function limparFormulario() {
+  campos.valor.value = '';
+  campos.historico.value = '';
+  campos.numeroDocumento.value = '';
+  campos.comprovante.value = '';
+  arquivo = null;
+  docUsadoEm = null;
+  mostrarArquivo();
+}
 
-['meta', 'data', 'competencia', 'valor', 'historico', 'numeroDocumento'].forEach(nome =>
+// ---------- Eventos ----------
+
+function avisarFalha(erro) {
+  console.error(erro);
+  mostrarAviso('Não foi possível carregar os dados. Verifique se a API e o banco estão rodando.');
+}
+
+campos.parceria.addEventListener('change', () => atualizarPlanos().catch(avisarFalha));
+campos.plano.addEventListener('change', () => atualizarMetas().catch(avisarFalha));
+campos.fonte.addEventListener('change', atualizarListaMetas);
+
+campos.fornecedor.addEventListener('change', () => {
+  campos.cnpj.value = formatarDocumento(fornecedorAtual()?.cpfCnpj);
+  verificarDocumento();
+});
+
+campos.tipoDocumento.addEventListener('change', verificarDocumento);
+campos.numeroDocumento.addEventListener('input', verificarDocumento);
+
+['meta', 'data', 'competencia', 'valor', 'historico', 'conta'].forEach(nome =>
   campos[nome].addEventListener('input', conferir));
 
 campos.valor.addEventListener('blur', () => {
@@ -206,22 +290,51 @@ areaEnvio.addEventListener('drop', e => {
   receberArquivo(e.dataTransfer.files[0]);
 });
 
-$('salvarRascunho').addEventListener('click', () => {
-  const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  $('statusRascunho').textContent = `Rascunho salvo às ${hora}`;
-});
-
-$('formLancamento').addEventListener('submit', e => {
+$('formLancamento').addEventListener('submit', async e => {
   e.preventDefault();
   if ($('registrar').disabled) return;
 
-  const numero = $('numeroLancamento').textContent;
-  mostrarAviso(`Despesa Nº ${numero} registrada no razão.`);
-  $('numeroLancamento').textContent = Number(numero) + 1;
+  salvando = true;
+  conferir();
+  $('statusEnvio').textContent = 'Gravando...';
+
+  const despesa = {
+    descricao: campos.historico.value.trim(),
+    valor: lerMoeda(campos.valor.value),
+    dataPagamento: `${campos.data.value}T00:00:00Z`,
+    contaBancariaId: Number(campos.conta.value),
+    planoTrabalhoId: Number(campos.plano.value),
+    metaId: Number(campos.meta.value),
+    fornecedorId: campos.fornecedor.value ? Number(campos.fornecedor.value) : null
+  };
+
+  let salva = null;
+
+  try {
+    salva = await apiPost('Despesas', despesa);
+
+    const envio = new FormData();
+    envio.append('despesaId', salva.id);
+    envio.append('tipo', campos.tipoDocumento.value);
+    envio.append('numero', campos.numeroDocumento.value.trim());
+    envio.append('arquivo', arquivo);
+
+    await apiEnviarArquivo('Documentos', envio);
+
+    mostrarAviso(`Despesa Nº ${salva.id} registrada com o comprovante.`);
+    limparFormulario();
+    await atualizarMetas();
+  } catch (erro) {
+    // Despesa sem comprovante não pode ficar: desfaz o que já foi gravado
+    if (salva) await apiDelete(`Despesas/${salva.id}`).catch(console.error);
+    mostrarAviso(`Não foi possível registrar: ${erro.message}`);
+  } finally {
+    salvando = false;
+    $('statusEnvio').textContent = '';
+    conferir();
+  }
 });
 
-opcoes(campos.parceria, cadastro.parcerias, '-');
-campos.cnpj.value = campos.fornecedor.value;
 campos.data.value = new Date().toISOString().slice(0, 10);
 campos.competencia.value = new Date().toISOString().slice(0, 7);
-atualizarPlanos();
+carregarCadastros().catch(avisarFalha);
