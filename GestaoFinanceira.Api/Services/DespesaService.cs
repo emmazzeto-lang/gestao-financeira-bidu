@@ -49,6 +49,15 @@ namespace GestaoFinanceira.Api.Services
             if (meta.PlanoTrabalhoId != despesa.PlanoTrabalhoId)
                 return "A meta informada não pertence a este plano de trabalho.";
 
+            if (despesa.FornecedorId != null)
+            {
+                var fornecedorExiste = await _context.Fornecedores
+                    .AnyAsync(f => f.Id == despesa.FornecedorId && f.Ativo);
+
+                if (!fornecedorExiste)
+                    return "O fornecedor informado não existe.";
+            }
+
             var jaExecutado = await _context.Despesas
                 .Where(d => d.MetaId == meta.Id && d.Id != idEmEdicao)
                 .SumAsync(d => d.Valor);

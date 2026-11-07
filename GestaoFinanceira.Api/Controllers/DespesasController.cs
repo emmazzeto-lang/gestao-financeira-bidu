@@ -29,6 +29,7 @@ namespace GestaoFinanceira.Api.Controllers
                 .Include(d => d.ContaBancaria)
                 .Include(d => d.PlanoTrabalho)
                 .Include(d => d.Meta)
+                .Include(d => d.Fornecedor)
                 .ToListAsync();
         }
 
@@ -41,6 +42,7 @@ namespace GestaoFinanceira.Api.Controllers
                 .Include(d => d.ContaBancaria)
                 .Include(d => d.PlanoTrabalho)
                 .Include(d => d.Meta)
+                .Include(d => d.Fornecedor)
                 .FirstOrDefaultAsync(d => d.Id == id);
 
             if (despesa == null)
@@ -63,6 +65,7 @@ namespace GestaoFinanceira.Api.Controllers
             despesa.ContaBancaria = null;
             despesa.PlanoTrabalho = null;
             despesa.Meta = null;
+            despesa.Fornecedor = null;
 
             _context.Despesas.Add(despesa);
             await _context.SaveChangesAsync();
@@ -100,6 +103,7 @@ namespace GestaoFinanceira.Api.Controllers
             existente.ContaBancariaId = despesa.ContaBancariaId;
             existente.PlanoTrabalhoId = despesa.PlanoTrabalhoId;
             existente.MetaId = despesa.MetaId;
+            existente.FornecedorId = despesa.FornecedorId;
 
             await _context.SaveChangesAsync();
 

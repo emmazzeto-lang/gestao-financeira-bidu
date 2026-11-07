@@ -35,5 +35,11 @@ namespace GestaoFinanceira.Api.Models
 
         [ForeignKey("MetaId")]
         public Meta? Meta { get; set; }
+
+        // Opcional: nem toda despesa tem fornecedor, como uma tarifa bancária
+        public int? FornecedorId { get; set; }
+
+        [ForeignKey("FornecedorId")]
+        public Fornecedor? Fornecedor { get; set; }
     }
 }

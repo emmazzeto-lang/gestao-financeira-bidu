@@ -76,6 +76,9 @@ namespace GestaoFinanceira.Api.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int?>("FornecedorId")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("MetaId")
                         .HasColumnType("integer");
 
@@ -89,6 +92,8 @@ namespace GestaoFinanceira.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("FornecedorId");
 
                     b.HasIndex("MetaId");
 
@@ -119,6 +124,35 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("FontesRecurso");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Fornecedor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("CpfCnpj")
+                        .IsRequired()
+                        .HasMaxLength(18)
+                        .HasColumnType("character varying(18)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CpfCnpj")
+                        .IsUnique();
+
+                    b.ToTable("Fornecedores");
                 });
 
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Meta", b =>
@@ -270,6 +304,11 @@ namespace GestaoFinanceira.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoFinanceira.Api.Models.Fornecedor", "Fornecedor")
+                        .WithMany()
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("GestaoFinanceira.Api.Models.Meta", "Meta")
                         .WithMany()
                         .HasForeignKey("MetaId");
@@ -281,6 +320,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("ContaBancaria");
+
+                    b.Navigation("Fornecedor");
 
                     b.Navigation("Meta");
 

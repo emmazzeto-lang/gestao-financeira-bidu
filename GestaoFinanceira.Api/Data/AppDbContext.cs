@@ -17,6 +17,7 @@ namespace GestaoFinanceira.Api.Data
         public DbSet<Despesa> Despesas { get; set; }
         public DbSet<FonteRecurso> FontesRecurso { get; set; }
         public DbSet<Meta> Metas { get; set; }
+        public DbSet<Fornecedor> Fornecedores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,7 +43,7 @@ namespace GestaoFinanceira.Api.Data
                 .Property(d => d.Valor)
                 .HasPrecision(18, 2);
 
-                        modelBuilder.Entity<Meta>()
+            modelBuilder.Entity<Meta>()
                 .Property(m => m.ValorPrevisto)
                 .HasPrecision(18, 2);
 
@@ -64,7 +65,17 @@ namespace GestaoFinanceira.Api.Data
             modelBuilder.Entity<FonteRecurso>()
                 .HasIndex(f => f.Nome)
                 .IsUnique();
+            // O CPF/CNPJ do fornecedor não pode se repetir
+            modelBuilder.Entity<Fornecedor>()
+                .HasIndex(f => f.CpfCnpj)
+                .IsUnique();
 
+            // Não deixa apagar um fornecedor que tem despesas
+            modelBuilder.Entity<Despesa>()
+                .HasOne(d => d.Fornecedor)
+                .WithMany()
+                .HasForeignKey(d => d.FornecedorId)
+                .OnDelete(DeleteBehavior.Restrict);
                 var conversorUtc = new ValueConverter<DateTime, DateTime>(
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
