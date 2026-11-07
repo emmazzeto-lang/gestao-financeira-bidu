@@ -16,6 +16,31 @@ namespace GestaoFinanceira.Api.Controllers
             _context = context;
         }
 
+        // GET: api/Metas/execucao?planoTrabalhoId=1
+        [HttpGet("execucao")]
+        public async Task<IActionResult> GetExecucao([FromQuery] int planoTrabalhoId)
+        {
+            var metas = await _context.Metas
+                .AsNoTracking()
+                .Where(m => m.PlanoTrabalhoId == planoTrabalhoId)
+                .OrderBy(m => m.Descricao)
+                .Select(m => new
+                {
+                    m.Id,
+                    m.Descricao,
+                    m.ValorPrevisto,
+                    m.FonteRecursoId,
+                    FonteRecurso = m.FonteRecurso!.Nome,
+                    Executado = _context.Despesas
+                        .Where(d => d.MetaId == m.Id)
+                        .Sum(d => d.Valor)
+                })
+                .ToListAsync();
+
+            return Ok(metas);
+        }
+
+
         // GET: api/Metas?planoTrabalhoId=1
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Meta>>> GetMetas(
