@@ -102,6 +102,55 @@ namespace GestaoFinanceira.Api.Migrations
                     b.ToTable("Despesas");
                 });
 
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Documento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataEnvio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DespesaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("NomeArquivo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NomeOriginal")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<long>("Tamanho")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("TipoConteudo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DespesaId");
+
+                    b.ToTable("Documentos");
+                });
+
             modelBuilder.Entity("GestaoFinanceira.Api.Models.FonteRecurso", b =>
                 {
                     b.Property<int>("Id")
@@ -326,6 +375,17 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Navigation("Meta");
 
                     b.Navigation("PlanoTrabalho");
+                });
+
+            modelBuilder.Entity("GestaoFinanceira.Api.Models.Documento", b =>
+                {
+                    b.HasOne("GestaoFinanceira.Api.Models.Despesa", "Despesa")
+                        .WithMany()
+                        .HasForeignKey("DespesaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Despesa");
                 });
 
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Meta", b =>
