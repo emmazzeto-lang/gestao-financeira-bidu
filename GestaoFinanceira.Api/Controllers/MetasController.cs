@@ -117,5 +117,32 @@ namespace GestaoFinanceira.Api.Controllers
 
             return CreatedAtAction(nameof(GetMeta), new { id = meta.Id }, meta);
         }
+
+        // DELETE: api/Metas/5
+        // Só enquanto o plano não foi validado, para corrigir um erro de digitação
+        [HttpDelete("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
+        public async Task<IActionResult> DeleteMeta(int id)
+        {
+            var meta = await _context.Metas
+                .Include(m => m.PlanoTrabalho)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (meta == null)
+                return NotFound(new { mensagem = "Meta não encontrada." });
+
+            if (meta.PlanoTrabalho!.Validado)
+                return BadRequest(new { mensagem = "O plano já foi validado: as metas não podem mais ser removidas." });
+
+            var temDespesas = await _context.Despesas.AnyAsync(d => d.MetaId == id);
+
+            if (temDespesas)
+                return Conflict(new { mensagem = "Esta meta já tem despesas lançadas." });
+
+            _context.Metas.Remove(meta);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

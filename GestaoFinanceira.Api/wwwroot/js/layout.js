@@ -7,8 +7,7 @@ const MENU = [
     grupo: 'Cadastros',
     itens: [
       { id: 'parcerias', texto: 'Parcerias', icone: 'bi-people', link: 'parcerias.html' },
-      { id: 'planos', texto: 'Planos de trabalho', icone: 'bi-clipboard-check', link: '#' },
-      { id: 'metas', texto: 'Fontes e metas', icone: 'bi-bullseye', link: '#' },
+      { id: 'planos', texto: 'Planos e metas', icone: 'bi-clipboard-check', link: 'planos.html' },
       { id: 'fornecedores', texto: 'Fornecedores', icone: 'bi-truck', link: '#' },
       { id: 'contas', texto: 'Contas bancárias', icone: 'bi-bank', link: '#' }
     ]
@@ -134,6 +133,18 @@ function iniciais(nome) {
   return (partes[0][0] + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase();
 }
 
+let usuarioLogado = null;
+
+// Esconde o que o perfil não pode usar. A API também recusa: isto só evita botões inúteis.
+// Telas que desenham botões depois de carregar chamam esta função de novo.
+function aplicarPerfis() {
+  if (!usuarioLogado) return;
+
+  document.querySelectorAll('[data-perfis]').forEach(elemento => {
+    elemento.hidden = !elemento.dataset.perfis.split(',').includes(usuarioLogado.perfil);
+  });
+}
+
 // Pergunta à API quem está logado; sem sessão, volta para o login
 async function mostrarUsuario() {
   const resposta = await fetch('/api/Auth/eu');
@@ -143,15 +154,12 @@ async function mostrarUsuario() {
     return;
   }
 
-  const usuario = await resposta.json();
-  document.getElementById('usuarioIniciais').textContent = iniciais(usuario.nome);
-  document.getElementById('usuarioNome').textContent = usuario.nome;
-  document.getElementById('usuarioPerfil').textContent = usuario.perfil;
-  
-  // Esconde o que o perfil não pode usar. A API também recusa: isto só evita botões inúteis.
-  document.querySelectorAll('[data-perfis]').forEach(elemento => {
-    elemento.hidden = !elemento.dataset.perfis.split(',').includes(usuario.perfil);
-  });
+  usuarioLogado = await resposta.json();
+  document.getElementById('usuarioIniciais').textContent = iniciais(usuarioLogado.nome);
+  document.getElementById('usuarioNome').textContent = usuarioLogado.nome;
+  document.getElementById('usuarioPerfil').textContent = usuarioLogado.perfil;
+
+  aplicarPerfis();
 
   document.getElementById('sair').addEventListener('click', async () => {
     await fetch('/api/Auth/sair', { method: 'POST' });
