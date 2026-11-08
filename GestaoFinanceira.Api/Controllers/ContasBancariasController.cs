@@ -69,5 +69,39 @@ namespace GestaoFinanceira.Api.Controllers
                 new { id = conta.Id },
                 conta);
         }
+
+        // PUT: api/ContasBancarias/1
+        [HttpPut("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
+        public async Task<IActionResult> PutContaBancaria(int id, ContaBancaria conta)
+        {
+            if (id != conta.Id)
+                return BadRequest(new { mensagem = "O ID da rota é diferente do ID da conta." });
+
+            var existente = await _context.ContasBancarias.FindAsync(id);
+
+            if (existente == null)
+                return NotFound(new { mensagem = "Conta bancária não encontrada." });
+
+            if (string.IsNullOrWhiteSpace(conta.NomeBanco) ||
+                string.IsNullOrWhiteSpace(conta.Agencia) ||
+                string.IsNullOrWhiteSpace(conta.NumeroConta))
+            {
+                return BadRequest(new
+                {
+                    mensagem = "Banco, agência e número da conta são obrigatórios."
+                });
+            }
+
+            // O saldo inicial fica como foi cadastrado: só muda banco, agência, número e situação
+            existente.NomeBanco = conta.NomeBanco.Trim();
+            existente.Agencia = conta.Agencia.Trim();
+            existente.NumeroConta = conta.NumeroConta.Trim();
+            existente.Ativo = conta.Ativo;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

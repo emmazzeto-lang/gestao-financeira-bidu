@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contas bancárias - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="contas">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Contas bancárias</h1>
+            <p>Contas por onde entram os repasses e saem os pagamentos</p>
+          </div>
+          <div class="acoes" data-perfis="Administrador,Tesouraria">
+            <button class="btn btn-primary" type="button" id="novo"><i class="bi bi-plus-lg"></i> Nova conta</button>
+          </div>
+        </div>
+
+
+        <section class="folha">
+          <div class="table-responsive">
+            <table class="razao" style="min-width: 620px">
+              <thead>
+                <tr><th>Banco</th><th style="width: 110px">Agência</th><th style="width: 140px">Conta</th><th class="valor" style="width: 150px">Saldo inicial</th><th style="width: 120px">Situação</th><th style="width: 90px"></th></tr>              </thead>
+              <tbody id="lista"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="painelForm" aria-labelledby="tituloForm" style="--bs-offcanvas-width: 420px">
+    <div class="offcanvas-header border-bottom">
+      <h2 class="offcanvas-title fs-5 fw-semibold" id="tituloForm">Nova conta</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <form id="form" novalidate>
+                <div class="mb-3">
+          <label class="form-label" for="nomeBanco">Banco</label>
+          <input class="form-control" id="nomeBanco" maxlength="100" required placeholder="Ex.: Banco do Brasil">
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-5">
+            <label class="form-label" for="agencia">Agência</label>
+            <input class="form-control" id="agencia" maxlength="20" required>
+          </div>
+          <div class="col-7">
+            <label class="form-label" for="numeroConta">Conta</label>
+            <input class="form-control" id="numeroConta" maxlength="20" required placeholder="00000-0">
+          </div>
+        </div>
+        <div class="mb-3" id="campoSaldo">
+          <label class="form-label" for="saldo">Saldo inicial (R$)</label>
+          <input class="form-control campo-valor" id="saldo" inputmode="decimal" placeholder="0,00">
+          <div class="form-text">Só no cadastro. Depois o saldo não muda por aqui.</div>
+        </div>
+        <div class="form-check form-switch mb-4" id="campoAtivo">
+          <input class="form-check-input" type="checkbox" id="ativo">
+          <label class="form-check-label" for="ativo">Ativa (aparece nos lançamentos e na conciliação)</label>
+        </div>
+        <div class="alert alert-danger d-none" id="erroSalvar"></div>
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-link" type="button" data-bs-dismiss="offcanvas">Cancelar</button>
+          <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast" id="aviso" role="status">
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/contas.js"></script>
+</body>
+</html>

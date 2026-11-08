@@ -3,6 +3,7 @@ using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using GestaoFinanceira.Api.Services;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -17,13 +18,13 @@ namespace GestaoFinanceira.Api.Controllers
             _context = context;
         }
 
-        // GET: api/Fornecedores
+        // GET: api/Fornecedores (só ativos) ou api/Fornecedores?todos=true
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Fornecedor>>> GetFornecedores()
+        public async Task<ActionResult<IEnumerable<Fornecedor>>> GetFornecedores([FromQuery] bool todos = false)
         {
             return await _context.Fornecedores
                 .AsNoTracking()
-                .Where(f => f.Ativo)
+                .Where(f => todos || f.Ativo)
                 .OrderBy(f => f.Nome)
                 .ToListAsync();
         }
@@ -46,10 +47,14 @@ namespace GestaoFinanceira.Api.Controllers
         public async Task<ActionResult<Fornecedor>> PostFornecedor(
             [FromBody] Fornecedor fornecedor)
         {
-            fornecedor.CpfCnpj = SomenteNumeros(fornecedor.CpfCnpj);
+            fornecedor.Nome = fornecedor.Nome.Trim();
+            fornecedor.CpfCnpj = ValidadorCpfCnpj.Normalizar(fornecedor.CpfCnpj);
 
-            if (fornecedor.CpfCnpj.Length != 11 && fornecedor.CpfCnpj.Length != 14)
-                return BadRequest(new { mensagem = "Informe um CPF (11 dígitos) ou CNPJ (14 dígitos)." });
+            if (fornecedor.Nome == "")
+                return BadRequest(new { mensagem = "Informe o nome do fornecedor." });
+
+            if (!ValidadorCpfCnpj.Valido(fornecedor.CpfCnpj))
+                return BadRequest(new { mensagem = "CPF ou CNPJ inválido. Confira os números." });
 
             var jaExiste = await _context.Fornecedores
                 .AnyAsync(f => f.CpfCnpj == fornecedor.CpfCnpj);
@@ -77,10 +82,13 @@ namespace GestaoFinanceira.Api.Controllers
             if (existente == null)
                 return NotFound(new { mensagem = "Fornecedor não encontrado." });
 
-            var cpfCnpj = SomenteNumeros(fornecedor.CpfCnpj);
+            var cpfCnpj = ValidadorCpfCnpj.Normalizar(fornecedor.CpfCnpj);
 
-            if (cpfCnpj.Length != 11 && cpfCnpj.Length != 14)
-                return BadRequest(new { mensagem = "Informe um CPF (11 dígitos) ou CNPJ (14 dígitos)." });
+            if (fornecedor.Nome.Trim() == "")
+                return BadRequest(new { mensagem = "Informe o nome do fornecedor." });
+
+            if (!ValidadorCpfCnpj.Valido(cpfCnpj))
+                return BadRequest(new { mensagem = "CPF ou CNPJ inválido. Confira os números." });
 
             var jaExiste = await _context.Fornecedores
                 .AnyAsync(f => f.CpfCnpj == cpfCnpj && f.Id != id);
@@ -88,19 +96,13 @@ namespace GestaoFinanceira.Api.Controllers
             if (jaExiste)
                 return Conflict(new { mensagem = "Já existe um fornecedor com esse CPF/CNPJ." });
 
-            existente.Nome = fornecedor.Nome;
+            existente.Nome = fornecedor.Nome.Trim();
             existente.CpfCnpj = cpfCnpj;
             existente.Ativo = fornecedor.Ativo;
 
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        // "75.315.333/0001-09" vira "75315333000109"
-        private static string SomenteNumeros(string texto)
-        {
-            return new string(texto.Where(char.IsDigit).ToArray());
         }
     }
 }

@@ -27,3 +27,14 @@ function escaparHtml(texto) {
   div.textContent = texto ?? '';
   return div.innerHTML;
 }
+
+
+// "11222333000181" -> "11.222.333/0001-81" e "52998224725" -> "529.982.247-25".
+// Aceita o CNPJ com letras (12.ABC.345/01DE-35).
+function formatarCpfCnpj(texto) {
+  const limpo = String(texto ?? '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+
+  if (limpo.length === 14) return limpo.replace(/^(.{2})(.{3})(.{3})(.{4})(.{2})$/, '$1.$2.$3/$4-$5');
+  if (limpo.length === 11) return limpo.replace(/^(.{3})(.{3})(.{3})(.{2})$/, '$1.$2.$3-$4');
+  return limpo;
+}
