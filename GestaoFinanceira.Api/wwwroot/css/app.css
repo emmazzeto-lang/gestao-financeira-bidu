@@ -1180,3 +1180,14 @@
     overflow: visible;
   }
 }
+
+/* ---------- Botão de sair ---------- */
+
+.usuario .sair {
+  padding: 4px;
+  color: var(--capa-apagado);
+}
+
+.usuario .sair:hover {
+  color: #fff;
+}

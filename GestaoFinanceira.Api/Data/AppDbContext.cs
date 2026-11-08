@@ -20,6 +20,7 @@ namespace GestaoFinanceira.Api.Data
         public DbSet<Fornecedor> Fornecedores { get; set; }
         public DbSet<Documento> Documentos { get; set; }
         public DbSet<MovimentoExtrato> MovimentosExtrato { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -117,7 +118,12 @@ namespace GestaoFinanceira.Api.Data
                 .HasForeignKey(m => m.ReceitaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-                
+            // Dois usuários não podem ter o mesmo e-mail
+            modelBuilder.Entity<Usuario>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+
                 var conversorUtc = new ValueConverter<DateTime, DateTime>(
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
