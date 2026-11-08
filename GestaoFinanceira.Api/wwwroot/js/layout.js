@@ -8,8 +8,8 @@ const MENU = [
     itens: [
       { id: 'parcerias', texto: 'Parcerias', icone: 'bi-people', link: 'parcerias.html' },
       { id: 'planos', texto: 'Planos e metas', icone: 'bi-clipboard-check', link: 'planos.html' },
-      { id: 'fornecedores', texto: 'Fornecedores', icone: 'bi-truck', link: '#' },
-      { id: 'contas', texto: 'Contas bancárias', icone: 'bi-bank', link: '#' }
+      { id: 'fornecedores', texto: 'Fornecedores', icone: 'bi-truck', link: 'fornecedores.html' },
+      { id: 'contas', texto: 'Contas bancárias', icone: 'bi-bank', link: 'contas.html' }
     ]
   },
   {

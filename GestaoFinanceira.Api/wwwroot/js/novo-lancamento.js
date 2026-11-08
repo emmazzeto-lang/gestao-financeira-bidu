@@ -26,14 +26,6 @@ function planoAtual() { return planos.find(p => p.id == campos.plano.value); }
 function metaAtual() { return metas.find(m => m.id == campos.meta.value); }
 function fornecedorAtual() { return fornecedores.find(f => f.id == campos.fornecedor.value); }
 
-// "75315333000109" -> "75.315.333/0001-09"
-function formatarDocumento(numeros) {
-  if (!numeros) return '';
-  return numeros.length === 14
-    ? numeros.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5')
-    : numeros.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
-}
-
 // ---------- Cadastros vindos da API ----------
 
 async function carregarCadastros() {
@@ -264,7 +256,7 @@ campos.plano.addEventListener('change', () => atualizarMetas().catch(avisarFalha
 campos.fonte.addEventListener('change', atualizarListaMetas);
 
 campos.fornecedor.addEventListener('change', () => {
-  campos.cnpj.value = formatarDocumento(fornecedorAtual()?.cpfCnpj);
+  campos.cnpj.value = formatarCpfCnpj(fornecedorAtual()?.cpfCnpj);
   verificarDocumento();
 });
 
