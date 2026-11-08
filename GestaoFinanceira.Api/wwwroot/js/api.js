@@ -58,3 +58,22 @@ async function apiDelete(rota) {
   exigirLogin(resposta);
   if (!resposta.ok) throw new Error(await lerErro(resposta, `Erro ${resposta.status} ao excluir`));
 }
+
+
+async function apiPut(rota, corpo) {
+  const resposta = await fetch(`${API_BASE}/${rota}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(corpo)
+  });
+
+  exigirLogin(resposta);
+  if (!resposta.ok) throw new Error(await lerErro(resposta, `Erro ${resposta.status} ao salvar`));
+}
+
+// PATCH sem corpo, para ações como "validar o plano"
+async function apiPatch(rota) {
+  const resposta = await fetch(`${API_BASE}/${rota}`, { method: 'PATCH' });
+  exigirLogin(resposta);
+  if (!resposta.ok) throw new Error(await lerErro(resposta, `Erro ${resposta.status} ao salvar`));
+}
