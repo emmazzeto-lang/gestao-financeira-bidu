@@ -76,6 +76,48 @@ namespace GestaoFinanceira.Api.Services
             return usuario;
         }
 
+        // idLogado evita que o administrador tire o próprio acesso e fique sem ninguém para gerenciar
+        public async Task<string?> AlterarAsync(int id, AlteracaoUsuario alteracao, int idLogado)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return "Usuário não encontrado.";
+
+            if (alteracao.Nome.Trim() == "")
+                return "Informe o nome.";
+
+            if (!Perfis.Todos.Contains(alteracao.Perfil))
+                return "Perfil inválido.";
+
+            if (id == idLogado && (!alteracao.Ativo || alteracao.Perfil != Perfis.Administrador))
+                return "Você não pode desativar nem tirar o perfil de administrador de si mesmo.";
+
+            usuario.Nome = alteracao.Nome.Trim();
+            usuario.Perfil = alteracao.Perfil;
+            usuario.Ativo = alteracao.Ativo;
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
+        public async Task<string?> RedefinirSenhaAsync(int id, string senha)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+
+            if (usuario == null)
+                return "Usuário não encontrado.";
+
+            var erroSenha = ConferirSenha(senha);
+            if (erroSenha != null)
+                return erroSenha;
+
+            usuario.SenhaHash = _hasher.HashPassword(usuario, senha);
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
         public static string? ConferirSenha(string senha)
         {
             if (string.IsNullOrWhiteSpace(senha) || senha.Length < TamanhoMinimoSenha)

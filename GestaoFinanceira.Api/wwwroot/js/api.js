@@ -12,6 +12,9 @@ function exigirLogin(resposta) {
 
 // A API devolve { mensagem: "..." } quando recusa algo
 async function lerErro(resposta, padrao) {
+    // 403: está logado, mas o perfil não permite esta ação
+  if (resposta.status === 403) return 'Seu perfil não tem permissão para esta ação.';
+
   try {
     const erro = await resposta.json();
     return erro.mensagem || erro.title || padrao;

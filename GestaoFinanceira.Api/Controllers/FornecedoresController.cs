@@ -2,6 +2,7 @@ using GestaoFinanceira.Api.Data;
 using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -41,6 +42,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Fornecedores
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<ActionResult<Fornecedor>> PostFornecedor(
             [FromBody] Fornecedor fornecedor)
         {
@@ -63,6 +65,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // PUT: api/Fornecedores/5
         [HttpPut("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> PutFornecedor(
             int id, [FromBody] Fornecedor fornecedor)
         {

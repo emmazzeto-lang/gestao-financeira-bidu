@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using GestaoFinanceira.Api.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,23 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         {
             contexto.Response.StatusCode = StatusCodes.Status403Forbidden;
             return Task.CompletedTask;
+        };
+        // A cada chamada confere no banco se o usuário continua ativo e com o mesmo perfil.
+        // Assim, desativar alguém ou trocar o perfil vale na hora, sem esperar o cookie vencer.
+        opcoes.Events.OnValidatePrincipal = async contexto =>
+        {
+            var id = contexto.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+            var perfil = contexto.Principal?.FindFirstValue(ClaimTypes.Role);
+            var banco = contexto.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+
+            var continuaValido = int.TryParse(id, out var usuarioId) && await banco.Usuarios
+                .AnyAsync(u => u.Id == usuarioId && u.Ativo && u.Perfil == perfil);
+
+            if (!continuaValido)
+            {
+                contexto.RejectPrincipal();
+                await contexto.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            }
         };
     });
 

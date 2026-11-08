@@ -21,6 +21,20 @@ namespace GestaoFinanceira.Api.Models
 
         public string Perfil { get; set; } = Perfis.Consulta;
     }
+    public class AlteracaoUsuario
+    {
+        public string Nome { get; set; } = string.Empty;
+
+        public string Perfil { get; set; } = Perfis.Consulta;
+
+        public bool Ativo { get; set; } = true;
+    }
+
+    public class NovaSenha
+    {
+        public string Senha { get; set; } = string.Empty;
+    }
+
 
     // O que a API devolve sobre um usuário: sem o hash da senha
     public record UsuarioResumo(int Id, string Nome, string Email, string Perfil, bool Ativo);

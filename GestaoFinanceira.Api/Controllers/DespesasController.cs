@@ -4,6 +4,7 @@ using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GestaoFinanceira.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -53,6 +54,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Despesas
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<ActionResult<Despesa>> PostDespesa(
             [FromBody] Despesa despesa)
         {
@@ -78,6 +80,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // PUT: api/Despesas/5
         [HttpPut("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> PutDespesa(
             int id, [FromBody] Despesa despesa)
         {
@@ -112,6 +115,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // DELETE: api/Despesas/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> DeleteDespesa(int id)
         {
             var despesa = await _context.Despesas.FindAsync(id);

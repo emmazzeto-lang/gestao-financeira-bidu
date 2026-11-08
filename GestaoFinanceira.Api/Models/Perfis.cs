@@ -9,5 +9,10 @@ namespace GestaoFinanceira.Api.Models
         public const string Consulta = "Consulta";
 
         public static readonly string[] Todos = { Administrador, Diretoria, Tesouraria, Consulta };
+
+        // Usados no [Authorize]: nomes separados por vírgula significam "qualquer um destes"
+        // Quem lança não valida: a diretoria confere o que a tesouraria registrou
+        public const string PodeLancar = Administrador + "," + Tesouraria;
+        public const string PodeValidar = Administrador + "," + Diretoria;
     }
 }

@@ -3,6 +3,7 @@ using GestaoFinanceira.Api.Models;
 using GestaoFinanceira.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -87,6 +88,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Documentos
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         [Consumes("multipart/form-data")]
         [RequestSizeLimit(12 * 1024 * 1024)]
         public async Task<ActionResult<Documento>> PostDocumento([FromForm] EnvioDocumento envio)
@@ -101,6 +103,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // DELETE: api/Documentos/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> DeleteDocumento(int id)
         {
             var documento = await _context.Documentos.FindAsync(id);
