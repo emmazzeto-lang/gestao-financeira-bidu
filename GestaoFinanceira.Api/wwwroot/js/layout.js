@@ -57,8 +57,9 @@ function montarMenu(paginaAtual) {
         </a>
         <nav class="d-flex flex-column">${html}</nav>
         <div class="usuario">
-          <div class="avatar">EM</div>
-          <div><strong>Emerson Mazzeto</strong><small>Tesouraria</small></div>
+          <div class="avatar" id="usuarioIniciais"></div>
+          <div class="flex-grow-1 text-truncate"><strong id="usuarioNome"></strong><small id="usuarioPerfil"></small></div>
+          <button class="btn btn-link sair" type="button" id="sair" title="Sair" aria-label="Sair"><i class="bi bi-box-arrow-right"></i></button>
         </div>
       </div>
     </aside>`;
@@ -108,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   app.insertAdjacentHTML('afterbegin', montarMenu(pagina));
   conteudo.insertAdjacentHTML('afterbegin', montarTopo());
   document.body.insertAdjacentHTML('beforeend', montarBarraInferior(pagina));
+  mostrarUsuario();
 
   // links de módulos que ainda não foram feitos
   document.querySelectorAll('.menu-item[href="#"]').forEach(link => {
@@ -115,3 +117,30 @@ document.addEventListener('DOMContentLoaded', () => {
     link.addEventListener('click', e => e.preventDefault());
   });
 });
+
+
+// "Emerson Mazzeto" -> "EM"
+function iniciais(nome) {
+  const partes = nome.trim().split(/\s+/);
+  return (partes[0][0] + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase();
+}
+
+// Pergunta à API quem está logado; sem sessão, volta para o login
+async function mostrarUsuario() {
+  const resposta = await fetch('/api/Auth/eu');
+
+  if (resposta.status === 401) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  const usuario = await resposta.json();
+  document.getElementById('usuarioIniciais').textContent = iniciais(usuario.nome);
+  document.getElementById('usuarioNome').textContent = usuario.nome;
+  document.getElementById('usuarioPerfil').textContent = usuario.perfil;
+
+  document.getElementById('sair').addEventListener('click', async () => {
+    await fetch('/api/Auth/sair', { method: 'POST' });
+    window.location.href = 'index.html';
+  });
+}

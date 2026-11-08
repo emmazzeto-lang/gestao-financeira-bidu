@@ -47,7 +47,7 @@
         <div class="mb-3">
           <div class="d-flex">
             <label class="form-label" for="senha">Senha</label>
-            <a class="ms-auto small fw-semibold" href="#">Esqueci a senha</a>
+            <span class="ms-auto small text-secondary">Esqueceu? Fale com o administrador</span>
           </div>
           <input class="form-control" id="senha" type="password" autocomplete="current-password" required>
           <div class="invalid-feedback">Informe a senha.</div>
@@ -56,20 +56,13 @@
           <input class="form-check-input" type="checkbox" id="manter">
           <label class="form-check-label text-secondary" for="manter">Manter conectado neste computador</label>
         </div>
-        <button class="btn btn-primary w-100 py-2" type="submit">Entrar</button>
+        <div class="alert alert-danger d-none" id="erroLogin" role="alert"></div>
+        <button class="btn btn-primary w-100 py-2" type="submit" id="botaoEntrar">Entrar</button>
         <p class="texto-apoio text-center mt-3">Acesso restrito à equipe da Fundação. Problemas? Fale com a tesouraria.</p>
       </form>
     </main>
   </div>
 
-  <script>
-    // autenticação ainda não implementada na API: por enquanto só valida e entra no painel
-    const form = document.getElementById('formLogin');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      form.classList.add('was-validated');
-      if (form.checkValidity()) window.location.href = 'painel.html';
-    });
-  </script>
+  <script src="js/login.js"></script>
 </body>
 </html>
