@@ -2,6 +2,7 @@ using GestaoFinanceira.Api.Data;
 using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -29,6 +30,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/FontesRecurso
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<ActionResult<FonteRecurso>> PostFonte(
             [FromBody] FonteRecurso fonte)
         {

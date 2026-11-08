@@ -17,7 +17,7 @@ const MENU = [
     grupo: 'Movimento',
     itens: [
       { id: 'receitas', texto: 'Receitas', icone: 'bi-arrow-down-left', link: '#' },
-      { id: 'despesas', texto: 'Despesas', icone: 'bi-arrow-up-right', link: 'novo-lancamento.html', contador: 7 },
+      { id: 'despesas', texto: 'Despesas', icone: 'bi-arrow-up-right', link: 'novo-lancamento.html', contador: 7, perfis: 'Administrador,Tesouraria' },
       { id: 'pagamentos', texto: 'Pagamentos', icone: 'bi-cash-stack', link: '#' },
       { id: 'conciliacao', texto: 'Conciliação', icone: 'bi-arrow-left-right', link: 'conciliacao.html', contador: 12 }
     ]
@@ -29,6 +29,11 @@ const MENU = [
   {
     grupo: 'Prestação',
     itens: [{ id: 'prestacao', texto: 'Relatórios e prestação', icone: 'bi-journal-text', link: 'prestacao-contas.html' }]
+  },
+  {
+    grupo: 'Administração',
+    perfis: 'Administrador',
+    itens: [{ id: 'usuarios', texto: 'Usuários', icone: 'bi-person-gear', link: 'usuarios.html', perfis: 'Administrador' }]
   }
 ];
 
@@ -36,13 +41,17 @@ function montarMenu(paginaAtual) {
   let html = '';
 
   for (const bloco of MENU) {
-    if (bloco.grupo) html += `<div class="menu-grupo">${bloco.grupo}</div>`;
+    if (bloco.grupo) {
+      const perfis = bloco.perfis ? ` data-perfis="${bloco.perfis}" hidden` : '';
+      html += `<div class="menu-grupo"${perfis}>${bloco.grupo}</div>`;
+    }
 
     for (const item of bloco.itens) {
       const ativo = item.id === paginaAtual ? ' ativo' : '';
       const contador = item.contador ? `<span class="contador">${item.contador}</span>` : '';
       const atual = ativo ? ' aria-current="page"' : '';
-      html += `<a class="menu-item${ativo}" href="${item.link}"${atual}>
+      const perfis = item.perfis ? ` data-perfis="${item.perfis}" hidden` : '';
+      html += `<a class="menu-item${ativo}" href="${item.link}"${atual}${perfis}>
         <i class="bi ${item.icone}"></i><span>${item.texto}</span>${contador}
       </a>`;
     }
@@ -94,7 +103,7 @@ function montarBarraInferior(paginaAtual) {
     <nav class="barra-inferior d-lg-none" aria-label="Atalhos">
       ${item('painel', 'painel.html', 'bi-grid-1x2', 'Painel')}
       ${item('parcerias', 'parcerias.html', 'bi-people', 'Parcerias')}
-      <a class="lancar" href="novo-lancamento.html" aria-label="Novo lançamento"><i class="bi bi-plus-lg"></i></a>
+      <a class="lancar" href="novo-lancamento.html" aria-label="Novo lançamento" data-perfis="Administrador,Tesouraria"><i class="bi bi-plus-lg"></i></a>
       ${item('conciliacao', 'conciliacao.html', 'bi-arrow-left-right', 'Conciliar')}
       ${item('prestacao', 'prestacao-contas.html', 'bi-journal-text', 'Prestação')}
     </nav>`;
@@ -138,6 +147,11 @@ async function mostrarUsuario() {
   document.getElementById('usuarioIniciais').textContent = iniciais(usuario.nome);
   document.getElementById('usuarioNome').textContent = usuario.nome;
   document.getElementById('usuarioPerfil').textContent = usuario.perfil;
+  
+  // Esconde o que o perfil não pode usar. A API também recusa: isto só evita botões inúteis.
+  document.querySelectorAll('[data-perfis]').forEach(elemento => {
+    elemento.hidden = !elemento.dataset.perfis.split(',').includes(usuario.perfil);
+  });
 
   document.getElementById('sair').addEventListener('click', async () => {
     await fetch('/api/Auth/sair', { method: 'POST' });

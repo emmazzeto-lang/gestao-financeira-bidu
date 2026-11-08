@@ -3,6 +3,7 @@ using GestaoFinanceira.Api.Models;
 using GestaoFinanceira.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -56,6 +57,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Receitas
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<ActionResult<Receita>> PostReceita([FromBody] Receita receita)
         {
             var erro = await _receitaService.ValidarAsync(receita);
@@ -76,6 +78,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // PUT: api/Receitas/5
         [HttpPut("{id}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> PutReceita(int id, [FromBody] Receita receita)
         {
             if (id != receita.Id)

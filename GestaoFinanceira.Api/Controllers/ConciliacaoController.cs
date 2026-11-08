@@ -1,6 +1,7 @@
 using GestaoFinanceira.Api.Models;
 using GestaoFinanceira.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -28,6 +29,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Conciliacao/importar (multipart: contaBancariaId + arquivo)
         [HttpPost("importar")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         [Consumes("multipart/form-data")]
         [RequestSizeLimit(3 * 1024 * 1024)]
         public async Task<ActionResult<ResultadoImportacao>> PostImportar([FromForm] ImportacaoExtrato importacao)
@@ -42,6 +44,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/Conciliacao/7  { "tipo": "despesa", "lancamentoId": 2 }
         [HttpPost("{movimentoId}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> PostConciliar(int movimentoId, [FromBody] PedidoConciliacao pedido)
         {
             var erro = await _conciliacaoService.ConciliarAsync(movimentoId, pedido);
@@ -54,6 +57,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // DELETE: api/Conciliacao/7
         [HttpDelete("{movimentoId}")]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<IActionResult> DeleteConciliacao(int movimentoId)
         {
             var erro = await _conciliacaoService.DesfazerAsync(movimentoId);

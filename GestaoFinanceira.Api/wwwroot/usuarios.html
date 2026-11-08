@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usuários - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body data-pagina="usuarios">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Usuários</h1>
+            <p>Quem acessa o sistema e o que cada perfil pode fazer</p>
+          </div>
+          <div class="acoes">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#novoUsuario">
+              <i class="bi bi-plus-lg"></i> Novo usuário
+            </button>
+          </div>
+        </div>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <div class="flex-grow-1" style="min-width: 0">
+            <section class="folha">
+              <div class="table-responsive">
+                <table class="razao" style="min-width: 680px">
+                  <thead>
+                    <tr><th>Nome</th><th>E-mail</th><th style="width: 170px">Perfil</th><th style="width: 90px">Ativo</th><th></th></tr>
+                  </thead>
+                  <tbody id="listaUsuarios"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="coluna-margem">
+            <section class="folha">
+              <div class="folha-topo"><h2>Perfis</h2></div>
+              <ul class="list-unstyled px-3 pb-2 small">
+                <li class="mb-2"><strong>Administrador</strong><br><span class="text-secondary">Faz tudo e gerencia os usuários</span></li>
+                <li class="mb-2"><strong>Tesouraria</strong><br><span class="text-secondary">Lança despesas, receitas, comprovantes e concilia o extrato</span></li>
+                <li class="mb-2"><strong>Diretoria</strong><br><span class="text-secondary">Valida planos de trabalho e consulta tudo</span></li>
+                <li class="mb-2"><strong>Consulta</strong><br><span class="text-secondary">Só visualiza, como um conselho fiscal</span></li>
+              </ul>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="novoUsuario" aria-labelledby="tituloNovoUsuario" style="--bs-offcanvas-width: 420px">
+    <div class="offcanvas-header border-bottom">
+      <h2 class="offcanvas-title fs-5 fw-semibold" id="tituloNovoUsuario">Novo usuário</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fechar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <form id="formUsuario" novalidate>
+        <div class="mb-3">
+          <label class="form-label" for="nome">Nome</label>
+          <input class="form-control" id="nome" maxlength="100" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">E-mail</label>
+          <input class="form-control" id="email" type="email" maxlength="150" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="senha">Senha inicial</label>
+          <input class="form-control" id="senha" type="password" minlength="8" required autocomplete="new-password">
+          <div class="form-text">Pelo menos 8 caracteres. Passe para a pessoa por um canal seguro.</div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label" for="perfil">Perfil</label>
+          <select class="form-select" id="perfil"></select>
+        </div>
+        <div class="alert alert-danger d-none" id="erroSalvar"></div>
+        <div class="d-flex gap-2 justify-content-end">
+          <button class="btn btn-link" type="button" data-bs-dismiss="offcanvas">Cancelar</button>
+          <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Criar usuário</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast" id="aviso" role="status">
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/usuarios.js"></script>
+</body>
+</html>

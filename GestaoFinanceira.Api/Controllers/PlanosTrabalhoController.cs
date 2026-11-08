@@ -2,6 +2,7 @@ using GestaoFinanceira.Api.Data;
 using GestaoFinanceira.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestaoFinanceira.Api.Controllers
 {
@@ -43,6 +44,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // POST: api/PlanosTrabalho
         [HttpPost]
+        [Authorize(Roles = Perfis.PodeLancar)]
         public async Task<ActionResult<PlanoTrabalho>> PostPlano(
             [FromBody] PlanoTrabalho plano)
         {
@@ -80,6 +82,7 @@ namespace GestaoFinanceira.Api.Controllers
 
         // PATCH: api/PlanosTrabalho/5/validar
         [HttpPatch("{id}/validar")]
+        [Authorize(Roles = Perfis.PodeValidar)]
         public async Task<IActionResult> ValidarPlano(int id)
         {
             var plano = await _context.PlanosTrabalho.FindAsync(id);
