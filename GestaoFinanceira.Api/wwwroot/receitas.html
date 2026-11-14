@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Receitas - Fundação Amigos de João Bidu</title>
+  <link rel="icon" href="img/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/tema.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+</head>
+
+<body data-pagina="receitas">
+  <div class="app">
+    <div class="conteudo">
+      <main class="pagina">
+
+        <div class="cabecalho-pagina">
+          <div>
+            <h1>Receitas</h1>
+            <p>Repasses e doações que entram na conta da parceria</p>
+          </div>
+        </div>
+
+        <div class="filtros">
+          <select class="form-select" id="parceria" aria-label="Parceria"></select>
+          <select class="form-select" id="plano" aria-label="Plano de trabalho"></select>
+          <span class="resumo" id="resumo"></span>
+        </div>
+
+        <div class="alert alert-warning" id="avisoBloqueio" hidden>
+          <i class="bi bi-lock"></i> Este plano ainda não foi validado pela diretoria. Enquanto isso, a parceria não recebe aportes.
+        </div>
+
+        <div class="d-flex gap-4 colunas align-items-start">
+          <div class="flex-grow-1" style="min-width: 0">
+            <section class="folha">
+              <div class="table-responsive">
+                <table class="razao" style="min-width: 680px">
+                  <thead>
+                    <tr><th style="width: 100px">Data</th><th>Receita</th><th style="width: 190px">Fonte</th><th class="valor" style="width: 130px">Valor</th></tr>
+                  </thead>
+                  <tbody id="lista"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <aside class="coluna-margem" id="painelNova" data-perfis="Administrador,Tesouraria">
+            <section class="folha">
+              <div class="folha-topo"><h2>Nova receita</h2></div>
+              <form class="px-3 pb-3" id="form" novalidate>
+                <div class="mb-3">
+                  <label class="form-label" for="descricao">Descrição</label>
+                  <input class="form-control" id="descricao" maxlength="200" required placeholder="Ex.: Repasse - 5ª parcela">
+                </div>
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <label class="form-label" for="valor">Valor (R$)</label>
+                    <input class="form-control campo-valor" id="valor" inputmode="decimal" required placeholder="0,00">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label" for="data">Recebida em</label>
+                    <input class="form-control" id="data" type="date" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="fonte">Fonte de recurso</label>
+                  <select class="form-select" id="fonte" required></select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label" for="conta">Conta que recebeu</label>
+                  <select class="form-select" id="conta" required></select>
+                </div>
+                <button class="btn btn-primary w-100" type="submit" id="registrar"><i class="bi bi-check2"></i> Registrar receita</button>
+              </form>
+            </section>
+          </aside>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div class="toast" id="aviso" role="status">
+      <div class="d-flex">
+        <div class="toast-body"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/receitas.js"></script>
+</body>
+</html>

@@ -46,6 +46,33 @@ namespace GestaoFinanceira.Api.Controllers
                 .ToListAsync();
         }
 
+        // GET: api/Documentos/situacao?planoTrabalhoId=1
+        // Todas as despesas, cada uma com a lista dos seus comprovantes (vazia quando falta)
+        [HttpGet("situacao")]
+        public async Task<ActionResult<IEnumerable<SituacaoComprovante>>> GetSituacao(
+            [FromQuery] int? planoTrabalhoId)
+        {
+            var consulta = _context.Despesas.AsNoTracking();
+
+            if (planoTrabalhoId.HasValue)
+                consulta = consulta.Where(d => d.PlanoTrabalhoId == planoTrabalhoId.Value);
+
+            return await consulta
+                .OrderByDescending(d => d.DataPagamento)
+                .Select(d => new SituacaoComprovante(
+                    d.Id,
+                    d.Descricao,
+                    d.Valor,
+                    d.DataPagamento,
+                    d.Fornecedor != null ? d.Fornecedor.Nome : null,
+                    _context.Documentos
+                        .Where(doc => doc.DespesaId == d.Id)
+                        .Select(doc => new DocumentoResumo(doc.Id, doc.Tipo, doc.Numero, doc.NomeOriginal, doc.Tamanho))
+                        .ToList()))
+                .ToListAsync();
+        }
+
+
         // GET: api/Documentos/repetido?tipo=NF-e&numero=004512&fornecedorId=1
         [HttpGet("repetido")]
         public async Task<IActionResult> GetRepetido(

@@ -15,15 +15,14 @@ const MENU = [
   {
     grupo: 'Movimento',
     itens: [
-      { id: 'receitas', texto: 'Receitas', icone: 'bi-arrow-down-left', link: '#' },
+      { id: 'receitas', texto: 'Receitas', icone: 'bi-arrow-down-left', link: 'receitas.html' },
       { id: 'despesas', texto: 'Despesas', icone: 'bi-arrow-up-right', link: 'novo-lancamento.html', contador: 7, perfis: 'Administrador,Tesouraria' },
-      { id: 'pagamentos', texto: 'Pagamentos', icone: 'bi-cash-stack', link: '#' },
       { id: 'conciliacao', texto: 'Conciliação', icone: 'bi-arrow-left-right', link: 'conciliacao.html', contador: 12 }
     ]
   },
   {
     grupo: 'Documentos',
-    itens: [{ id: 'notas', texto: 'Notas e comprovantes', icone: 'bi-file-earmark-text', link: '#' }]
+    itens: [{ id: 'notas', texto: 'Notas e comprovantes', icone: 'bi-file-earmark-text', link: 'comprovantes.html' }]
   },
   {
     grupo: 'Prestação',

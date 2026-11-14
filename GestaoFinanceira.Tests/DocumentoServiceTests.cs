@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using GestaoFinanceira.Api.Controllers;
 
 namespace GestaoFinanceira.Tests
 {
@@ -117,6 +118,21 @@ namespace GestaoFinanceira.Tests
             Assert.Equal(1, repetido?.DespesaId);
             Assert.Null(outroFornecedor);
         }
+
+        [Fact]
+        public async Task SituacaoMostraQuemTemEQuemNaoTemComprovante()
+        {
+            await _service.EnviarAsync(Envio(1, "004512", Arquivo("nota.pdf", "%PDF-1.4")));
+            var controller = new DocumentosController(_context, _service);
+
+            var resposta = await controller.GetSituacao(planoTrabalhoId: 1);
+
+            var lista = resposta.Value!.ToList();
+            Assert.Equal(3, lista.Count);
+            Assert.Single(lista.Single(d => d.DespesaId == 1).Documentos);
+            Assert.Empty(lista.Single(d => d.DespesaId == 2).Documentos);
+        }
+
 
         // Substitui o ambiente do ASP.NET: só precisamos dizer qual é a pasta raiz
         private class AmbienteDeTeste : IWebHostEnvironment
