@@ -65,6 +65,9 @@ namespace GestaoFinanceira.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("Competencia")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("ContaBancariaId")
                         .HasColumnType("integer");
 
@@ -81,6 +84,10 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("FormaPagamento")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.Property<int?>("FornecedorId")
                         .HasColumnType("integer");

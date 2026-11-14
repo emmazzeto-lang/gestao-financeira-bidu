@@ -83,11 +83,8 @@ function montarTopo() {
       <div class="ms-auto"></div>
       <div class="busca input-group">
         <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
-        <input class="form-control border-start-0 ps-0" type="search" placeholder="Buscar por Nº, fornecedor ou valor" aria-label="Buscar">
+        <input id="buscaTopo" class="form-control border-start-0 ps-0" type="search" placeholder="Buscar por Nº, fornecedor ou valor" aria-label="Buscar">
       </div>
-      <button class="btn btn-outline-secondary btn-icone" type="button" aria-label="Notificações">
-        <i class="bi bi-bell"></i>
-      </button>
     </header>`;
 }
 
@@ -159,6 +156,12 @@ async function mostrarUsuario() {
   aplicarPerfis();
   carregarContadores();
   carregarParceriasTopo();
+  // A busca do topo procura nas despesas, na tela de notas e comprovantes
+  document.getElementById('buscaTopo').addEventListener('keydown', e => {
+    const texto = e.target.value.trim();
+    if (e.key !== 'Enter' || !texto) return;
+    window.location.href = `comprovantes.html?busca=${encodeURIComponent(texto)}`;
+  });
 
   document.getElementById('sair').addEventListener('click', async () => {
     await fetch('/api/Auth/sair', { method: 'POST' });

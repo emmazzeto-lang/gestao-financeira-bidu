@@ -100,7 +100,9 @@ function desenharMetas() {
     const falta = plano.valorAprovado - somaMetas(plano.id);
     $('situacaoPlano').textContent = plano.validado
       ? 'Plano validado: as metas não mudam mais.'
-      : `Falta distribuir R$ ${moeda(falta)} do valor aprovado.`;
+      : falta > 0.005
+        ? `Falta distribuir R$ ${moeda(falta)} do valor aprovado.`
+        : 'Valor aprovado todo distribuído. O plano já pode ser validado.';
   }
 
   $('listaMetas').innerHTML = metas.length
@@ -118,6 +120,8 @@ function desenharMetas() {
   // O formulário e o botão de validar só fazem sentido com o plano ainda aberto
   $('formMeta').dataset.perfis = aberto ? 'Administrador,Tesouraria' : 'nenhum';
   $('validar').dataset.perfis = aberto ? 'Administrador,Diretoria' : 'nenhum';
+  // Só dá para validar com todo o valor aprovado distribuído nas metas
+  $('validar').disabled = !plano || plano.valorAprovado - somaMetas(plano.id) > 0.005;
   aplicarPerfis();
 }
 

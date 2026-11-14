@@ -108,6 +108,8 @@ namespace GestaoFinanceira.Api.Controllers
             existente.Descricao = despesa.Descricao;
             existente.Valor = despesa.Valor;
             existente.DataPagamento = despesa.DataPagamento;
+            existente.Competencia = despesa.Competencia;
+            existente.FormaPagamento = despesa.FormaPagamento;
             existente.ContaBancariaId = despesa.ContaBancariaId;
             existente.PlanoTrabalhoId = despesa.PlanoTrabalhoId;
             existente.MetaId = despesa.MetaId;

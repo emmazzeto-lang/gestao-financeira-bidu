@@ -294,6 +294,8 @@ $('formLancamento').addEventListener('submit', async e => {
     descricao: campos.historico.value.trim(),
     valor: lerMoeda(campos.valor.value),
     dataPagamento: `${campos.data.value}T00:00:00Z`,
+    competencia: `${campos.competencia.value}-01T00:00:00Z`,
+    formaPagamento: $('formaPagamento').value,
     contaBancariaId: Number(campos.conta.value),
     planoTrabalhoId: Number(campos.plano.value),
     metaId: Number(campos.meta.value),

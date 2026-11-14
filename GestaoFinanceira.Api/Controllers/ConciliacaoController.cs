@@ -27,6 +27,19 @@ namespace GestaoFinanceira.Api.Controllers
             return Ok(await _conciliacaoService.MontarBatimentoAsync(contaBancariaId, ano, mes));
         }
 
+        // GET: api/Conciliacao/pendencia
+        // Sem pendência, responde 204 (sem conteúdo)
+        [HttpGet("pendencia")]
+        public async Task<IActionResult> GetPendencia()
+        {
+            var pendencia = await _conciliacaoService.PrimeiraPendenciaAsync();
+
+            if (pendencia == null)
+                return NoContent();
+
+            return Ok(pendencia);
+        }
+
         // POST: api/Conciliacao/importar (multipart: contaBancariaId + arquivo)
         [HttpPost("importar")]
         [Authorize(Roles = Perfis.PodeLancar)]

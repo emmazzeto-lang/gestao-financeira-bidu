@@ -16,6 +16,20 @@ namespace GestaoFinanceira.Api.Services
             _context = context;
         }
 
+        // A mesma regra do número ao lado de Conciliação no menu: movimento sem despesa nem receita
+        public async Task<Pendencia?> PrimeiraPendenciaAsync()
+        {
+            var movimento = await _context.MovimentosExtrato
+                .AsNoTracking()
+                .Where(m => m.DespesaId == null && m.ReceitaId == null)
+                .OrderBy(m => m.Data)
+                .FirstOrDefaultAsync();
+
+            if (movimento == null)
+                return null;
+
+            return new Pendencia(movimento.ContaBancariaId, movimento.Data.Year, movimento.Data.Month);
+        }
         public async Task<(ResultadoImportacao? resultado, string? erro)> ImportarAsync(ImportacaoExtrato importacao)
         {
             var arquivo = importacao.Arquivo;

@@ -225,7 +225,25 @@ $('arquivoOfx').addEventListener('change', async e => {
   }
 });
 
-$('periodo').value = new Date().toISOString().slice(0, 7);
-carregarContas()
-  .then(carregar)
-  .catch(falhou);
+// Abre na conta e no mês do movimento pendente mais antigo, o mesmo que o número do menu conta.
+// Sem pendência, abre no mês atual.
+async function iniciar() {
+  $('periodo').value = new Date().toISOString().slice(0, 7);
+  await carregarContas();
+
+  const resposta = await fetch('/api/Conciliacao/pendencia');
+
+  if (resposta.status === 200) {
+    const pendencia = await resposta.json();
+    const temConta = [...$('conta').options].some(o => o.value === String(pendencia.contaBancariaId));
+
+    if (temConta) {
+      $('conta').value = pendencia.contaBancariaId;
+      $('periodo').value = `${pendencia.ano}-${String(pendencia.mes).padStart(2, '0')}`;
+    }
+  }
+
+  await carregar();
+}
+
+iniciar().catch(falhou);

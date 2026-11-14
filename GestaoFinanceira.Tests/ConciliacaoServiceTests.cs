@@ -150,5 +150,28 @@ namespace GestaoFinanceira.Tests
             Assert.Null(erro);
             Assert.Equal("sugestao", batimento.Linhas.Single(l => l.Movimento?.Id == 1).Situacao);
         }
+        [Fact]
+        public async Task PendenciaApontaOMovimentoMaisAntigoSemLancamento()
+        {
+            using var context = BancoDeTeste.Criar();
+            context.MovimentosExtrato.Add(new MovimentoExtrato { Data = new DateTime(2026, 9, 3, 0, 0, 0, DateTimeKind.Utc), Valor = -50, Descricao = "Tarifa", IdBanco = "a", ContaBancariaId = 1 });
+            context.MovimentosExtrato.Add(new MovimentoExtrato { Data = new DateTime(2026, 8, 20, 0, 0, 0, DateTimeKind.Utc), Valor = -80, Descricao = "Já conciliado", IdBanco = "b", ContaBancariaId = 1, DespesaId = 99 });
+            context.MovimentosExtrato.Add(new MovimentoExtrato { Data = new DateTime(2026, 10, 1, 0, 0, 0, DateTimeKind.Utc), Valor = -10, Descricao = "Outro", IdBanco = "c", ContaBancariaId = 1 });
+            await context.SaveChangesAsync();
+            var servico = new ConciliacaoService(context);
+
+            var pendencia = await servico.PrimeiraPendenciaAsync();
+
+            Assert.Equal(new Pendencia(1, 2026, 9), pendencia);
+        }
+
+        [Fact]
+        public async Task SemMovimentoPendenteNaoHaPendencia()
+        {
+            using var context = BancoDeTeste.Criar();
+            var servico = new ConciliacaoService(context);
+
+            Assert.Null(await servico.PrimeiraPendenciaAsync());
+        }
     }
 }
