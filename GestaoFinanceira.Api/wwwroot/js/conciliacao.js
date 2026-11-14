@@ -60,6 +60,9 @@ async function carregar() {
 
   mostrarTotais(batimento);
   desenhar();
+
+  // Conciliar ou importar muda o número ao lado de Conciliação no menu
+  carregarContadores();
 }
 
 function mostrarTotais(batimento) {

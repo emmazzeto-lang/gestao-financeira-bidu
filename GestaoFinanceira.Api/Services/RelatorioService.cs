@@ -106,6 +106,7 @@ namespace GestaoFinanceira.Api.Services
                 .Include(d => d.PlanoTrabalho!).ThenInclude(p => p.Parceria)
                 .Include(d => d.Meta!).ThenInclude(m => m.FonteRecurso)
                 .Include(d => d.Fornecedor)
+                .Include(d => d.CriadoPor)
                 .FirstOrDefaultAsync(d => d.Id == despesaId);
 
             if (despesa == null)
@@ -123,6 +124,7 @@ namespace GestaoFinanceira.Api.Services
             var plano = despesa.PlanoTrabalho!;
             var validacao = plano.DataValidacao != null ? $" - validado em {plano.DataValidacao:dd/MM/yyyy}" : "";
             var fornecedor = despesa.Fornecedor != null ? $" - {despesa.Fornecedor.Nome}" : "";
+            var autor = despesa.CriadoPor != null ? $" - por {despesa.CriadoPor.Nome}" : "";
 
             return new List<EtapaRastreio>
             {
@@ -130,7 +132,7 @@ namespace GestaoFinanceira.Api.Services
                 new("Plano de trabalho", plano.Descricao + validacao, plano.Validado),
                 new("Fonte de recurso", despesa.Meta?.FonteRecurso?.Nome ?? "Sem fonte", despesa.Meta != null),
                 new("Meta", despesa.Meta?.Descricao ?? "Sem meta", despesa.Meta != null),
-                new("Lançamento", $"Nº {despesa.Id} - R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))} - {despesa.DataPagamento:dd/MM/yyyy}", true),
+                new("Lançamento", $"Nº {despesa.Id} - R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))} - {despesa.DataPagamento:dd/MM/yyyy}{autor}", true),
                 documento != null
                     ? new("Comprovante", $"{documento.Tipo} {documento.Numero}{fornecedor}", true)
                     : new("Comprovante", "Ainda não enviado", false),

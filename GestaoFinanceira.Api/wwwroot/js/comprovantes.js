@@ -98,6 +98,7 @@ $('formAnexo').addEventListener('submit', async e => {
     await apiEnviarArquivo('Documentos', envio);
     bootstrap.Offcanvas.getInstance($('painelAnexo')).hide();
     aviso(`Comprovante anexado à despesa Nº ${despesaDoAnexo.despesaId}.`);
+    carregarContadores();
     await carregar();
   } catch (erro) {
     $('erroAnexo').textContent = erro.message;

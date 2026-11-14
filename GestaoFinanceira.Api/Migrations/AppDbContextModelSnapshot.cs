@@ -68,6 +68,12 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Property<int>("ContaBancariaId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("CriadoEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CriadoPorId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DataPagamento")
                         .HasColumnType("timestamp with time zone");
 
@@ -92,6 +98,8 @@ namespace GestaoFinanceira.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("CriadoPorId");
 
                     b.HasIndex("FornecedorId");
 
@@ -364,6 +372,12 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Property<int>("ContaBancariaId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("CriadoEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CriadoPorId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DataRecebimento")
                         .HasColumnType("timestamp with time zone");
 
@@ -385,6 +399,8 @@ namespace GestaoFinanceira.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ContaBancariaId");
+
+                    b.HasIndex("CriadoPorId");
 
                     b.HasIndex("FonteRecursoId");
 
@@ -440,6 +456,11 @@ namespace GestaoFinanceira.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoFinanceira.Api.Models.Usuario", "CriadoPor")
+                        .WithMany()
+                        .HasForeignKey("CriadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("GestaoFinanceira.Api.Models.Fornecedor", "Fornecedor")
                         .WithMany()
                         .HasForeignKey("FornecedorId")
@@ -456,6 +477,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("ContaBancaria");
+
+                    b.Navigation("CriadoPor");
 
                     b.Navigation("Fornecedor");
 
@@ -538,6 +561,11 @@ namespace GestaoFinanceira.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GestaoFinanceira.Api.Models.Usuario", "CriadoPor")
+                        .WithMany()
+                        .HasForeignKey("CriadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("GestaoFinanceira.Api.Models.FonteRecurso", "FonteRecurso")
                         .WithMany()
                         .HasForeignKey("FonteRecursoId");
@@ -549,6 +577,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("ContaBancaria");
+
+                    b.Navigation("CriadoPor");
 
                     b.Navigation("FonteRecurso");
 

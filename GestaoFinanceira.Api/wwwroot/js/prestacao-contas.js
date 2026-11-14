@@ -23,6 +23,8 @@ async function carregarParcerias() {
   $('parceria').innerHTML = parcerias.length
     ? parcerias.map(p => `<option value="${p.id}">${escaparHtml(`${p.termoFomento} - ${p.nome}`)}</option>`).join('')
     : '<option value="">Nenhuma parceria cadastrada</option>';
+    // Começa na parceria escolhida no topo
+    if (parcerias.some(p => p.id == parceriaEscolhida())) $('parceria').value = parceriaEscolhida();
 }
 
 async function carregarRelatorio() {

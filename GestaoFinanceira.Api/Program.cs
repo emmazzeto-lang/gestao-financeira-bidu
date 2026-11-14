@@ -19,6 +19,7 @@ builder.Services.AddScoped<DocumentoService>();
 builder.Services.AddScoped<ConciliacaoService>();
 builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<PainelService>();
 
 // Login por cookie: depois de entrar, o navegador manda o cookie em toda chamada
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -71,6 +72,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Recuperação de acesso, rodada no servidor (não existe pela tela):
+//   dotnet run -- redefinir-senha email@fundacao.org NovaSenha123
+if (args.Length == 3 && args[0] == "redefinir-senha")
+{
+    using var escopo = app.Services.CreateScope();
+    var usuarios = escopo.ServiceProvider.GetRequiredService<UsuarioService>();
+
+    var erro = await usuarios.RedefinirSenhaPorEmailAsync(args[1], args[2]);
+    Console.WriteLine(erro ?? $"Senha de {args[1]} redefinida. O usuário também foi reativado.");
+    return;
+}
 
 if (app.Environment.IsDevelopment())
 {

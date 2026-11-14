@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GestaoFinanceira.Api.Models
 {
@@ -15,6 +16,9 @@ namespace GestaoFinanceira.Api.Models
         [Required]
         [MaxLength(150)]
         public string Email { get; set; } = string.Empty;
+
+        // JsonIgnore: mesmo que alguém devolva um Usuario na API, o hash não sai no JSON
+        [JsonIgnore]
 
         // Nunca a senha em si: só o resultado do hash, que não dá para desfazer
         [Required]

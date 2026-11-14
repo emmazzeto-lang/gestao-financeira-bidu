@@ -21,21 +21,25 @@
         <div class="cabecalho-pagina">
           <div>
             <h1>Painel</h1>
-            <p>Setembro de 2026 - Prefeitura Municipal - Assistência Social</p>
+            <p id="subtitulo"></p>
           </div>
           <div class="acoes">
-            <button class="btn btn-outline-secondary" type="button"><i class="bi bi-download"></i> Exportar</button>
-            <a class="btn btn-primary" href="novo-lancamento.html data-perfis="Administrador,Tesouraria""><i class="bi bi-plus-lg"></i> Novo lançamento</a>
+            <a class="btn btn-primary" href="novo-lancamento.html" data-perfis="Administrador,Tesouraria"><i class="bi bi-plus-lg"></i> Novo lançamento</a>
           </div>
         </div>
 
-        <div class="folha transporte">
-          <span class="termo">Transporte <span class="valor">258.285,95</span></span>
-          <span class="termo entrada">+ Entradas <span class="valor">67.000,00</span></span>
-          <span class="termo saida">- Saídas <span class="valor">12.805,40</span></span>
-          <span class="termo resultado">= Saldo em 17/09 <span class="valor">312.480,55</span></span>
+        <div class="filtros">
+          <select class="form-select" id="conta" aria-label="Conta"></select>
+          <input class="form-control" type="month" id="periodo" aria-label="Mês" style="max-width: 180px">
         </div>
-        <p class="nota-transporte">3 contas bancárias - conciliado com extrato até 18/09/2026 - valores em R$</p>
+
+        <div class="folha transporte">
+          <span class="termo">Transporte <span class="valor" id="transporte">-</span></span>
+          <span class="termo entrada">+ Entradas <span class="valor" id="entradas">-</span></span>
+          <span class="termo saida">- Saídas <span class="valor" id="saidas">-</span></span>
+          <span class="termo resultado"><span id="rotuloSaldo">= Saldo</span> <span class="valor" id="saldoFinal">-</span></span>
+        </div>
+        <p class="nota-transporte" id="notaRazao"></p>
 
         <div class="d-flex gap-4 colunas align-items-start">
           <div class="flex-grow-1" style="min-width: 0">
@@ -43,16 +47,16 @@
             <section class="folha">
               <div class="folha-topo">
                 <div class="d-flex align-items-baseline gap-3 flex-wrap">
-                  <h2>Razão de setembro</h2>
-                  <span class="detalhe">Folha 09/2026 - BB - CC 56789-0</span>
+                  <h2 id="tituloRazao">Razão</h2>
+                  <span class="detalhe" id="detalheRazao"></span>
                 </div>
-                <a class="link-forte" href="#">Abrir razão completo</a>
+                <a class="link-forte" href="conciliacao.html">Conferir com o extrato</a>
               </div>
 
               <div class="table-responsive">
                 <table class="razao fixa" style="min-width: 640px">
                   <colgroup>
-                    <col style="width: 84px"><col style="width: 58px"><col>
+                    <col style="width: 64px"><col style="width: 58px"><col>
                     <col style="width: 108px"><col style="width: 108px"><col style="width: 118px"><col style="width: 48px">
                   </colgroup>
                   <thead>
@@ -62,50 +66,7 @@
                       <th class="text-center">Conf.</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr class="transportado">
-                      <td class="numero">-</td><td class="data">01/09</td>
-                      <td>Transporte do mês anterior</td>
-                      <td class="valor filete"></td><td class="valor"></td><td class="valor">258.285,95</td><td></td>
-                    </tr>
-                    <tr>
-                      <td class="numero">1037</td><td class="data">10/09</td>
-                      <td><div class="historico">Doação - Instituto Parceiro</div><div class="complemento">Receita - Recibo 0213</div></td>
-                      <td class="valor filete debito"></td><td class="valor credito">5.000,00</td><td class="valor">263.285,95</td>
-                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
-                    </tr>
-                    <tr>
-                      <td class="numero">1038<span class="alfinete pequeno">2</span></td><td class="data">12/09</td>
-                      <td><div class="historico">Material pedagógico - Papelaria Central</div><div class="complemento">Meta 2 - Educação - NF-e 88120</div></td>
-                      <td class="valor filete debito">1.184,50</td><td class="valor credito"></td><td class="valor">262.101,45</td>
-                      <td class="text-center"><i class="bi bi-circle conferencia pendente" title="A conciliar"></i></td>
-                    </tr>
-                    <tr>
-                      <td class="numero">1039<span class="alfinete pequeno">1</span></td><td class="data">15/09</td>
-                      <td><div class="historico">Oficina de música - Ana Lima</div><div class="complemento">Meta 2 - Educação - sem documento</div></td>
-                      <td class="valor filete debito">3.200,00</td><td class="valor credito"></td><td class="valor">258.901,45</td>
-                      <td class="text-center"><i class="bi bi-exclamation-circle conferencia falta" title="Sem comprovante"></i></td>
-                    </tr>
-                    <tr>
-                      <td class="numero">1040</td><td class="data">16/09</td>
-                      <td><div class="historico">Repasse TF 012/2025 - 4ª parcela</div><div class="complemento">Receita - Ofício 41/26</div></td>
-                      <td class="valor filete debito"></td><td class="valor credito">62.000,00</td><td class="valor">320.901,45</td>
-                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
-                    </tr>
-                    <tr>
-                      <td class="numero">1041</td><td class="data">17/09</td>
-                      <td><div class="historico">Gêneros alimentícios - Atacadão</div><div class="complemento">Meta 1 - Alimentação - NF-e 004512</div></td>
-                      <td class="valor filete debito">8.420,90</td><td class="valor credito"></td><td class="valor">312.480,55</td>
-                      <td class="text-center"><i class="bi bi-check2 conferencia ok" title="Conciliado"></i></td>
-                    </tr>
-                    <tr class="em-branco"><td></td><td></td><td></td><td class="filete"></td><td></td><td></td><td></td></tr>
-                    <tr class="em-branco"><td></td><td></td><td></td><td class="filete"></td><td></td><td></td><td></td></tr>
-                    <tr class="total">
-                      <td></td><td></td><td>Saldo em 17/09 - a transportar</td>
-                      <td class="valor filete debito">12.805,40</td><td class="valor credito">67.000,00</td>
-                      <td class="valor"><span class="sublinhado-duplo">312.480,55</span></td><td></td>
-                    </tr>
-                  </tbody>
+                  <tbody id="razao"></tbody>
                 </table>
               </div>
 
@@ -130,32 +91,9 @@
             <section class="folha">
               <div class="folha-topo">
                 <h2>À margem</h2>
-                <span class="detalhe">3 pendências</span>
+                <span class="detalhe" id="qtdPendencias"></span>
               </div>
-              <div class="nota">
-                <span class="alfinete">1</span>
-                <div>
-                  <strong>Nº 1039 sem comprovante</strong>
-                  <p>Oficina de música, R$ 3.200,00. Despesa sem documento não entra na prestação de contas.</p>
-                  <a href="novo-lancamento.html">Anexar comprovante</a>
-                </div>
-              </div>
-              <div class="nota">
-                <span class="alfinete">2</span>
-                <div>
-                  <strong>12 movimentos a conciliar</strong>
-                  <p>Extrato BB - CC 56789-0 importado em 18/09. Inclui o Nº 1038.</p>
-                  <a href="conciliacao.html">Conciliar agora</a>
-                </div>
-              </div>
-              <div class="nota">
-                <span class="alfinete">3</span>
-                <div>
-                  <strong>Prestação do TF 012/2025 em 12 dias</strong>
-                  <p>Prazo 30/09/2026. 6 outras despesas ainda sem nota fiscal.</p>
-                  <a href="prestacao-contas.html">Ver checklist</a>
-                </div>
-              </div>
+              <div id="pendencias"></div>
             </section>
           </aside>
         </div>
@@ -166,33 +104,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/formato.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/layout.js"></script>
-  <script>
-    // TODO: trocar pelos dados da API quando existir o endpoint de metas
-    const metas = [
-      { nome: 'Meta 1 - Alimentação', previsto: 720000, executado: 561600 },
-      { nome: 'Meta 2 - Educação', previsto: 540000, executado: 291600 },
-      { nome: 'Meta 3 - Saúde', previsto: 300000, executado: 273000 },
-      { nome: 'Meta 4 - Infraestrutura', previsto: 240000, executado: 76800 }
-    ];
-
-    const maiorPrevisto = Math.max(...metas.map(m => m.previsto));
-
-    document.getElementById('metas').innerHTML = metas.map(m => {
-      const pct = Math.round(m.executado / m.previsto * 100);
-      const alerta = pct >= 90 ? ' alerta' : '';
-      return `
-        <div class="meta-linha">
-          <div>${m.nome}</div>
-          <div class="trilho-celula">
-            <div class="trilho${alerta}" style="width: ${m.previsto / maiorPrevisto * 100}%">
-              <span style="width: ${pct}%"></span>
-            </div>
-          </div>
-          <div class="executado">${moeda(m.executado)}<small>de ${moeda(m.previsto)}</small></div>
-          <div class="percentual${alerta}">${pct}%</div>
-        </div>`;
-    }).join('');
-  </script>
+  <script src="js/painel.js"></script>
 </body>
 </html>
