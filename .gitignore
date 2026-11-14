@@ -429,3 +429,5 @@ FodyWeavers.xsd
 *.msp
 
 GestaoFinanceira.Api/Armazenamento/
+# Cópias de segurança geradas por scripts/backup.sh
+backups/
