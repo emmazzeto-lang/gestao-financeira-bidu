@@ -16,6 +16,13 @@ namespace GestaoFinanceira.Api.Models
         public decimal Valor { get; set; }
         
         public DateTime DataPagamento { get; set; }
+        
+        // Mês a que a despesa se refere, que pode ser diferente do mês do pagamento.
+        // Gravado como o dia 1 do mês. Opcional para não quebrar as despesas antigas.
+        public DateTime? Competencia { get; set; }
+
+        [MaxLength(30)]
+        public string? FormaPagamento { get; set; }
 
         [Required]
         public int ContaBancariaId { get; set; }

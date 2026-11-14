@@ -98,6 +98,15 @@ namespace GestaoFinanceira.Api.Controllers
             if (!temMetas)
                 return BadRequest(new { mensagem = "Cadastre ao menos uma meta antes de validar o plano." });
 
+            var distribuido = await _context.Metas
+                .Where(m => m.PlanoTrabalhoId == id)
+                .SumAsync(m => m.ValorPrevisto);
+
+            if (distribuido != plano.ValorAprovado)
+                return BadRequest(new
+                {
+                    mensagem = $"Distribua todo o valor aprovado nas metas antes de validar. Faltam R$ {plano.ValorAprovado - distribuido:N2}."
+                });
             plano.Validado = true;
             plano.DataValidacao = DateTime.UtcNow;
 

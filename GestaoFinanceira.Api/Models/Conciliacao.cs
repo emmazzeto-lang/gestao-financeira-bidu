@@ -27,5 +27,7 @@ namespace GestaoFinanceira.Api.Models
     // Situacao: conciliado, sugestao, sem-lancamento ou sem-extrato
     public record LinhaBatimento(string Situacao, MovimentoResumo? Movimento, LancamentoSistema? Lancamento);
 
+    // Onde está o movimento do extrato mais antigo ainda sem lançamento ligado
+    public record Pendencia(int ContaBancariaId, int Ano, int Mes);
     public record Batimento(decimal TotalExtrato, decimal TotalSistema, List<LinhaBatimento> Linhas);
 }

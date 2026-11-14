@@ -30,8 +30,9 @@ function desenhar() {
     if (filtro === 'sem' && d.documentos.length) return false;
     if (!busca) return true;
 
-    // Procura na descrição, no fornecedor, no Nº da despesa e no número das notas
-    const texto = [d.descricao, d.fornecedor ?? '', String(d.despesaId), ...d.documentos.map(doc => doc.numero)]
+    // O valor entra nos dois jeitos de digitar: 1.234,56 e 1234,56
+    const texto = [d.descricao, d.fornecedor ?? '', String(d.despesaId), moeda(d.valor),
+      String(d.valor).replace('.', ','), ...d.documentos.map(doc => doc.numero)]
       .join(' ').toLowerCase();
     return texto.includes(busca);
   });
@@ -106,4 +107,6 @@ $('formAnexo').addEventListener('submit', async e => {
   }
 });
 
+// Busca vinda do topo: comprovantes.html?busca=texto
+$('busca').value = new URLSearchParams(window.location.search).get('busca') ?? '';
 carregar().catch(erro => aviso(erro.message));
