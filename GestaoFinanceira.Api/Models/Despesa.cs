@@ -41,5 +41,14 @@ namespace GestaoFinanceira.Api.Models
 
         [ForeignKey("FornecedorId")]
         public Fornecedor? Fornecedor { get; set; }
+
+
+        // Auditoria: quem registrou e quando (preenchido pela API, nunca pela tela)
+        public int? CriadoPorId { get; set; }
+
+        [ForeignKey("CriadoPorId")]
+        public Usuario? CriadoPor { get; set; }
+
+        public DateTime? CriadoEm { get; set; }
     }
 }

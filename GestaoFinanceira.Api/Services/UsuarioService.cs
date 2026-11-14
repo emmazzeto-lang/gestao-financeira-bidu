@@ -118,6 +118,27 @@ namespace GestaoFinanceira.Api.Services
             return null;
         }
 
+        // Usado pelo comando "redefinir-senha" do Program.cs, quando ninguém consegue entrar
+        public async Task<string?> RedefinirSenhaPorEmailAsync(string email, string senha)
+        {
+            email = email.Trim().ToLowerInvariant();
+            var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (usuario == null)
+                return $"Nenhum usuário com o e-mail {email}.";
+
+            var erroSenha = ConferirSenha(senha);
+            if (erroSenha != null)
+                return erroSenha;
+
+            usuario.SenhaHash = _hasher.HashPassword(usuario, senha);
+            usuario.Ativo = true;
+            await _context.SaveChangesAsync();
+
+            return null;
+        }
+
+
         public static string? ConferirSenha(string senha)
         {
             if (string.IsNullOrWhiteSpace(senha) || senha.Length < TamanhoMinimoSenha)

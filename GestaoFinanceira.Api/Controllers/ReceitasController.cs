@@ -68,7 +68,11 @@ namespace GestaoFinanceira.Api.Controllers
             // Evita inserir objetos relacionados enviados no JSON.
             receita.ContaBancaria = null;
             receita.PlanoTrabalho = null;
-            receita.FonteRecurso = null;
+            receita.CriadoPor = null;
+
+            // Quem está logado fica registrado como autor do lançamento
+            receita.CriadoPorId = User.IdDoUsuario();
+            receita.CriadoEm = DateTime.UtcNow;
 
             _context.Receitas.Add(receita);
             await _context.SaveChangesAsync();

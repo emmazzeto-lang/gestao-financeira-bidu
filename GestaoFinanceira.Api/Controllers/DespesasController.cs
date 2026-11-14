@@ -68,6 +68,11 @@ namespace GestaoFinanceira.Api.Controllers
             despesa.PlanoTrabalho = null;
             despesa.Meta = null;
             despesa.Fornecedor = null;
+            despesa.CriadoPor = null;
+
+            // Quem está logado fica registrado como autor do lançamento
+            despesa.CriadoPorId = User.IdDoUsuario();
+            despesa.CriadoEm = DateTime.UtcNow;
 
             _context.Despesas.Add(despesa);
             await _context.SaveChangesAsync();

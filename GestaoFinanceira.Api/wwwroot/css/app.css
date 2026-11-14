@@ -1191,3 +1191,20 @@
 .usuario .sair:hover {
   color: #fff;
 }
+
+
+/* ---------- Seletor de parceria do topo ---------- */
+
+.seletor-parceria {
+  margin: 0;
+  cursor: pointer;
+}
+
+.seletor-parceria select {
+  max-width: 200px;
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}

@@ -118,11 +118,23 @@ namespace GestaoFinanceira.Api.Data
                 .HasForeignKey(m => m.ReceitaId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Não deixa apagar um usuário que já registrou lançamentos
+            modelBuilder.Entity<Despesa>()
+                .HasOne(d => d.CriadoPor)
+                .WithMany()
+                .HasForeignKey(d => d.CriadoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Receita>()
+                .HasOne(r => r.CriadoPor)
+                .WithMany()
+                .HasForeignKey(r => r.CriadoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Dois usuários não podem ter o mesmo e-mail
             modelBuilder.Entity<Usuario>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
-
 
                 var conversorUtc = new ValueConverter<DateTime, DateTime>(
                     v => DateTime.SpecifyKind(v, DateTimeKind.Utc),
