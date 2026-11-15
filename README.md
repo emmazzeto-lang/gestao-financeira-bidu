@@ -18,6 +18,27 @@ Modernizar a gestão da Fundação, reduzir processos manuais e centralizar info
 * Docker e Caddy (HTTPS) no servidor
 * xUnit nos testes
 
+## Testar rapidamente (avaliação)
+Só é preciso ter o [Docker Desktop](https://www.docker.com/products/docker-desktop) instalado e aberto.
+
+1. Na pasta do projeto, rode:
+   ```
+   docker compose -f docker-compose.avaliacao.yml up -d --build
+   ```
+   A primeira vez leva alguns minutos, porque o Docker baixa as imagens e compila o sistema.
+2. Abra `http://localhost:8080` e entre com um dos usuários de teste. A senha de todos é `Avaliacao2026`.
+
+| Perfil | E-mail | O que pode fazer |
+|---|---|---|
+| Administrador | `admin@avaliacao.local` | Tudo, inclusive cadastrar usuários |
+| Tesouraria | `tesouraria@avaliacao.local` | Lançar receitas e despesas, anexar notas e conciliar |
+| Diretoria | `diretoria@avaliacao.local` | Validar planos de trabalho e consultar |
+| Consulta | `consulta@avaliacao.local` | Só consultar |
+
+O banco já vem com uma parceria, um plano validado com quatro metas, receitas e despesas de setembro e outubro de 2026 com os comprovantes, e o extrato de setembro importado.
+
+Para desligar: `docker compose -f docker-compose.avaliacao.yml down`. Para apagar também os dados e começar do zero, acrescente `-v` no fim.
+
 ## Rodar no computador (desenvolvimento)
 Pré-requisitos: [.NET 10 SDK](https://dotnet.microsoft.com/download), [Docker Desktop](https://www.docker.com/products/docker-desktop) e Git.
 

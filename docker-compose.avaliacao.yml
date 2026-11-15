@@ -1,0 +1,35 @@
+# Avaliação do projeto: banco e sistema com dados de exemplo, sem domínio nem HTTPS.
+# Só precisa do Docker instalado. Na pasta do projeto:
+#   docker compose -f docker-compose.avaliacao.yml up -d --build
+# Depois abra http://localhost:8080 (usuários de teste no README).
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: avaliacao
+      POSTGRES_PASSWORD: avaliacao
+      POSTGRES_DB: gestao_financeira
+    volumes:
+      - banco:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U avaliacao -d gestao_financeira"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./GestaoFinanceira.Api
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Database=gestao_financeira;Username=avaliacao;Password=avaliacao
+      DadosDemonstracao: "true"
+    volumes:
+      - armazenamento:/app/Armazenamento
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  banco:
+  armazenamento:
