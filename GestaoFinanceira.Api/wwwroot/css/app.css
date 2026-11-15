@@ -193,6 +193,11 @@
   border-color: var(--pauta);
 }
 
+/* Painéis laterais (anexar, cadastrar) nunca maiores que a tela do celular */
+.offcanvas {
+  max-width: 100%;
+}
+
 .btn-icone {
   width: 36px;
   height: 36px;
@@ -1021,6 +1026,10 @@
   color: var(--capa-apagado);
 }
 
+.login-capa footer a {
+  color: #fff;
+}
+
 .login-form {
   flex: 1;
   display: flex;
@@ -1039,6 +1048,86 @@
   line-height: 32px;
   font-weight: 600;
   letter-spacing: -.012em;
+}
+
+/* ---------- Créditos ---------- */
+
+.creditos-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 32px;
+  background: var(--capa);
+}
+
+.creditos-topo .marca {
+  padding: 0;
+}
+
+.creditos {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 32px 48px;
+}
+
+.creditos-corpo {
+  padding: 4px 20px 18px;
+}
+
+.creditos-colunas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0 20px;
+}
+
+.creditos-lista dt {
+  font-size: 11px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--tinta-3);
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.creditos-lista dt:first-child {
+  margin-top: 0;
+}
+
+.creditos-lista dd {
+  font-size: 15px;
+  margin: 2px 0 0;
+}
+
+.creditos-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px 64px;
+  padding-top: 18px;
+}
+
+.creditos-logos figure {
+  margin: 0;
+}
+
+.creditos-logos figcaption {
+  font-size: 12.5px;
+  color: var(--tinta-2);
+  margin-bottom: 8px;
+}
+
+.creditos-logos img {
+  height: 64px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 575.98px) {
+  .creditos-topo,
+  .creditos {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 }
 
 /* ---------- Barra inferior (celular) ---------- */

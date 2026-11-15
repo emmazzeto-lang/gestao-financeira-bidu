@@ -32,6 +32,10 @@ const MENU = [
     grupo: 'Administração',
     perfis: 'Administrador',
     itens: [{ id: 'usuarios', texto: 'Usuários', icone: 'bi-person-gear', link: 'usuarios.html', perfis: 'Administrador' }]
+  },
+  {
+    grupo: 'Sobre',
+    itens: [{ id: 'creditos', texto: 'Créditos', icone: 'bi-info-circle', link: 'creditos.html' }]
   }
 ];
 
@@ -76,6 +80,9 @@ function montarMenu(paginaAtual) {
 function montarTopo() {
   return `
     <header class="topo">
+      <button class="btn btn-outline-secondary btn-icone d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral" aria-label="Abrir menu">
+        <i class="bi bi-list"></i>
+      </button>
       <label class="seletor-parceria">
         <small>Parceria</small>
         <select id="parceriaTopo" aria-label="Parceria"></select>
