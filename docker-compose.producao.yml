@@ -1,0 +1,49 @@
+# Servidor da Fundação: banco, API e Caddy (HTTPS).
+# Antes de subir, copie .env.exemplo para .env e preencha.
+#   docker compose -f docker-compose.producao.yml up -d --build
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gestao
+      POSTGRES_PASSWORD: ${SENHA_BANCO:?Defina SENHA_BANCO no arquivo .env}
+      POSTGRES_DB: gestao_financeira
+    volumes:
+      - banco:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gestao -d gestao_financeira"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./GestaoFinanceira.Api
+    restart: unless-stopped
+    environment:
+      ConnectionStrings__DefaultConnection: Host=db;Database=gestao_financeira;Username=gestao;Password=${SENHA_BANCO}
+    volumes:
+      - armazenamento:/app/Armazenamento
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMINIO: ${DOMINIO:?Defina DOMINIO no arquivo .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy:/data
+    depends_on:
+      - api
+
+# Volumes guardam os dados fora dos contêineres: atualizar a API não apaga nada
+volumes:
+  banco:
+  armazenamento:
+  caddy:
