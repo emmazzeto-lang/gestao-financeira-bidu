@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.DataProtection;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // No computador a conexão vem do appsettings.Development.json; no servidor, de uma variável de ambiente
@@ -25,21 +26,23 @@ builder.Services.AddScoped<ConciliacaoService>();
 builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<PainelService>();
+builder.Services.AddScoped<DadosDemonstracao>();
 // Chaves que protegem o cookie de login. Ficam gravadas junto com os comprovantes,
 // para ninguém ser desconectado quando a API reinicia ou é atualizada.
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "Armazenamento", "Chaves")));
 // Login por cookie: depois de entrar, o navegador manda o cookie em toda chamada
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+
     .AddCookie(opcoes =>
     {
         opcoes.Cookie.Name = "gestao.sessao";
         opcoes.Cookie.HttpOnly = true;
         opcoes.Cookie.SameSite = SameSiteMode.Strict;
         // No servidor o cookie só trafega por HTTPS
-        opcoes.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
-            ? CookieSecurePolicy.SameAsRequest
-            : CookieSecurePolicy.Always;
+        // Cookie seguro sempre que o acesso for por HTTPS. Atrás do Caddy a API sabe disso
+        // pelos cabeçalhos repassados; na avaliação, em http://localhost, ele continua funcionando.
+        opcoes.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         opcoes.ExpireTimeSpan = TimeSpan.FromHours(8);
         opcoes.SlidingExpiration = true;
 
@@ -113,6 +116,12 @@ if (!app.Environment.IsDevelopment())
 {
     using var escopo = app.Services.CreateScope();
     await escopo.ServiceProvider.GetRequiredService<AppDbContext>().Database.MigrateAsync();
+}
+// Banco de avaliação: com DadosDemonstracao=true, um banco ainda sem usuários recebe dados de exemplo
+if (app.Configuration.GetValue<bool>("DadosDemonstracao"))
+{
+    using var escopo = app.Services.CreateScope();
+    await escopo.ServiceProvider.GetRequiredService<DadosDemonstracao>().CriarAsync();
 }
 
 app.UseForwardedHeaders();
