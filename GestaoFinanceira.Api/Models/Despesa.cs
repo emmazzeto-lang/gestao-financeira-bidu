@@ -49,6 +49,21 @@ namespace GestaoFinanceira.Api.Models
         [ForeignKey("FornecedorId")]
         public Fornecedor? Fornecedor { get; set; }
 
+        // Tarifa bancária: não tem nota, o próprio extrato mostra a cobrança.
+        // Fica comprovada quando a despesa é conciliada com a linha do extrato.
+        public bool ComprovadaPeloExtrato { get; set; }
+
+        // Gasto acima do saldo da meta: segue com justificativa e espera a autorização da coordenação
+        [MaxLength(500)]
+        public string? JustificativaExcesso { get; set; }
+
+        public int? AutorizadoPorId { get; set; }
+
+        [ForeignKey("AutorizadoPorId")]
+        public Usuario? AutorizadoPor { get; set; }
+
+        public DateTime? AutorizadoEm { get; set; }
+
 
         // Auditoria: quem registrou e quando (preenchido pela API, nunca pela tela)
         public int? CriadoPorId { get; set; }

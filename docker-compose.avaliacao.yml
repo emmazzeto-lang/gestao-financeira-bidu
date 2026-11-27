@@ -3,6 +3,9 @@
 #   docker compose -f docker-compose.avaliacao.yml up -d --build
 # Depois abra http://localhost:8080 (usuários de teste no README).
 
+# Nome próprio, para não se misturar com o banco de desenvolvimento do docker-compose.yml
+name: joao-bidu-avaliacao
+
 services:
   db:
     image: postgres:15

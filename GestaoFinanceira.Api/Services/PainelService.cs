@@ -82,11 +82,13 @@ namespace GestaoFinanceira.Api.Services
             var lancamentos = despesas.Select(d =>
                 {
                     var temComprovante = comprovantes.TryGetValue(d.Id, out var comprovante);
-                    var situacao = !temComprovante ? "sem-comprovante"
-                        : despesasConciliadas.Contains(d.Id) ? "conciliado" : "a-conciliar";
+                    var conciliada = despesasConciliadas.Contains(d.Id);
+                    var peloExtrato = d.ComprovadaPeloExtrato && conciliada;
+                    var situacao = !temComprovante && !peloExtrato ? "sem-comprovante"
+                        : conciliada ? "conciliado" : "a-conciliar";
 
                     return new LinhaRazao("despesa", d.Id, d.DataPagamento, d.Descricao,
-                        $"{d.Meta?.Descricao ?? "Sem meta"} - {comprovante ?? "sem comprovante"}",
+                        $"{d.Meta?.Descricao ?? "Sem meta"} - {comprovante ?? (peloExtrato ? "extrato bancário" : "sem comprovante")}",
                         d.Valor, 0, 0, situacao, d.CriadoPor?.Nome);
                 })
                 .Concat(receitas.Select(r => new LinhaRazao("receita", r.Id, r.DataRecebimento, r.Descricao,
@@ -116,12 +118,16 @@ namespace GestaoFinanceira.Api.Services
         public async Task<Contadores> ContadoresAsync()
         {
             var semComprovante = await _context.Despesas
-                .CountAsync(d => !_context.Documentos.Any(doc => doc.DespesaId == d.Id));
+                .SemComprovante(_context)
+                .CountAsync();
 
             var aConciliar = await _context.MovimentosExtrato
                 .CountAsync(m => m.DespesaId == null && m.ReceitaId == null);
 
-            return new Contadores(semComprovante, aConciliar);
+            var aguardandoAutorizacao = await _context.Despesas
+                .CountAsync(d => d.JustificativaExcesso != null && d.AutorizadoPorId == null);
+
+            return new Contadores(semComprovante, aConciliar, aguardandoAutorizacao);
         }
 
         private async Task<DateTime?> UltimaDataAsync(int contaId)

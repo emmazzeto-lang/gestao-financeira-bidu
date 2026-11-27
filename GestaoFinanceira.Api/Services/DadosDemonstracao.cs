@@ -103,6 +103,9 @@ namespace GestaoFinanceira.Api.Services
                 Despesa(Data(2026, 10, 14), "Livros para a biblioteca", 2_640m, educacao, papelaria, "Boleto")
             };
 
+            // A tarifa não tem nota: o extrato de setembro comprova a cobrança
+            despesas[4].ComprovadaPeloExtrato = true;
+
             _context.Usuarios.AddRange(usuarios);
             _context.Fornecedores.AddRange(mercado, papelaria, eletrica, medica);
             _context.Metas.AddRange(alimentacao, educacao, saude, obras);
@@ -110,13 +113,13 @@ namespace GestaoFinanceira.Api.Services
             _context.Despesas.AddRange(despesas);
             await _context.SaveChangesAsync();
 
-            // Comprovantes: a tarifa (despesas[4]) fica sem, para mostrar a pendência
+            // Comprovantes: a tarifa (despesas[4]) é comprovada pelo extrato e os livros
+            // (despesas[6]) ficam sem nota, para mostrar a pendência
             await Comprovar(despesas[0], "NF-e", "004512");
             await Comprovar(despesas[1], "NF-e", "001877");
             await Comprovar(despesas[2], "Recibo", "0003");
             await Comprovar(despesas[3], "NFS-e", "2026118");
             await Comprovar(despesas[5], "NF-e", "004733");
-            await Comprovar(despesas[6], "NF-e", "001902");
 
             // Extrato de setembro já importado: quase tudo conciliado, a revisão elétrica fica para conferir
             _context.MovimentosExtrato.AddRange(

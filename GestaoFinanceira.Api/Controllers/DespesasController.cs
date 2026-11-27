@@ -70,6 +70,11 @@ namespace GestaoFinanceira.Api.Controllers
             despesa.Fornecedor = null;
             despesa.CriadoPor = null;
 
+            // A autorização só vem da coordenação, pelo PATCH .../autorizar
+            despesa.AutorizadoPor = null;
+            despesa.AutorizadoPorId = null;
+            despesa.AutorizadoEm = null;
+
             // Quem está logado fica registrado como autor do lançamento
             despesa.CriadoPorId = User.IdDoUsuario();
             despesa.CriadoEm = DateTime.UtcNow;
@@ -105,6 +110,15 @@ namespace GestaoFinanceira.Api.Controllers
             if (erro != null)
                 return BadRequest(new { mensagem = erro });
 
+            // Mudou o que foi autorizado: a coordenação precisa autorizar de novo
+            if (existente.Valor != despesa.Valor || existente.MetaId != despesa.MetaId
+                || existente.JustificativaExcesso != despesa.JustificativaExcesso)
+            {
+                existente.AutorizadoPorId = null;
+                existente.AutorizadoEm = null;
+            }
+
+            existente.JustificativaExcesso = despesa.JustificativaExcesso;
             existente.Descricao = despesa.Descricao;
             existente.Valor = despesa.Valor;
             existente.DataPagamento = despesa.DataPagamento;
@@ -114,6 +128,60 @@ namespace GestaoFinanceira.Api.Controllers
             existente.PlanoTrabalhoId = despesa.PlanoTrabalhoId;
             existente.MetaId = despesa.MetaId;
             existente.FornecedorId = despesa.FornecedorId;
+            existente.ComprovadaPeloExtrato = despesa.ComprovadaPeloExtrato;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // GET: api/Despesas/acima-do-previsto?planoTrabalhoId=1
+        // Despesas que passaram o saldo da meta, autorizadas ou não
+        [HttpGet("acima-do-previsto")]
+        public async Task<ActionResult<IEnumerable<GastoAcimaDoPrevisto>>> GetAcimaDoPrevisto(
+            [FromQuery] int? planoTrabalhoId)
+        {
+            var consulta = _context.Despesas
+                .AsNoTracking()
+                .Where(d => d.JustificativaExcesso != null);
+
+            if (planoTrabalhoId.HasValue)
+                consulta = consulta.Where(d => d.PlanoTrabalhoId == planoTrabalhoId.Value);
+
+            return await consulta
+                .OrderByDescending(d => d.DataPagamento)
+                .Select(d => new GastoAcimaDoPrevisto(
+                    d.Id,
+                    d.Descricao,
+                    d.Valor,
+                    d.DataPagamento,
+                    d.Meta != null ? d.Meta.Descricao : "Sem meta",
+                    d.JustificativaExcesso!,
+                    d.CriadoPor != null ? d.CriadoPor.Nome : null,
+                    d.AutorizadoPor != null ? d.AutorizadoPor.Nome : null,
+                    d.AutorizadoEm))
+                .ToListAsync();
+        }
+
+        // PATCH: api/Despesas/5/autorizar
+        // A coordenação autoriza o gasto acima do previsto na meta
+        [HttpPatch("{id}/autorizar")]
+        [Authorize(Roles = Perfis.PodeValidar)]
+        public async Task<IActionResult> AutorizarExcesso(int id)
+        {
+            var despesa = await _context.Despesas.FindAsync(id);
+
+            if (despesa == null)
+                return NotFound(new { mensagem = "Despesa não encontrada." });
+
+            if (despesa.JustificativaExcesso == null)
+                return BadRequest(new { mensagem = "Esta despesa cabe no saldo da meta e não precisa de autorização." });
+
+            if (despesa.AutorizadoPorId != null)
+                return Conflict(new { mensagem = "Esta despesa já foi autorizada." });
+
+            despesa.AutorizadoPorId = User.IdDoUsuario();
+            despesa.AutorizadoEm = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
 

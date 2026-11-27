@@ -65,8 +65,17 @@ namespace GestaoFinanceira.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("AutorizadoEm")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("AutorizadoPorId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("Competencia")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("ComprovadaPeloExtrato")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("ContaBancariaId")
                         .HasColumnType("integer");
@@ -92,6 +101,10 @@ namespace GestaoFinanceira.Api.Migrations
                     b.Property<int?>("FornecedorId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("JustificativaExcesso")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<int?>("MetaId")
                         .HasColumnType("integer");
 
@@ -103,6 +116,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .HasColumnType("numeric(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AutorizadoPorId");
 
                     b.HasIndex("ContaBancariaId");
 
@@ -457,6 +472,11 @@ namespace GestaoFinanceira.Api.Migrations
 
             modelBuilder.Entity("GestaoFinanceira.Api.Models.Despesa", b =>
                 {
+                    b.HasOne("GestaoFinanceira.Api.Models.Usuario", "AutorizadoPor")
+                        .WithMany()
+                        .HasForeignKey("AutorizadoPorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("GestaoFinanceira.Api.Models.ContaBancaria", "ContaBancaria")
                         .WithMany()
                         .HasForeignKey("ContaBancariaId")
@@ -482,6 +502,8 @@ namespace GestaoFinanceira.Api.Migrations
                         .HasForeignKey("PlanoTrabalhoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AutorizadoPor");
 
                     b.Navigation("ContaBancaria");
 

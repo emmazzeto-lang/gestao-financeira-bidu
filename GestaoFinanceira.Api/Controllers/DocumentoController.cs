@@ -41,7 +41,7 @@ namespace GestaoFinanceira.Api.Controllers
         {
             return await _context.Despesas
                 .AsNoTracking()
-                .Where(d => !_context.Documentos.Any(doc => doc.DespesaId == d.Id))
+                .SemComprovante(_context)
                 .OrderBy(d => d.DataPagamento)
                 .ToListAsync();
         }
@@ -65,6 +65,7 @@ namespace GestaoFinanceira.Api.Controllers
                     d.Valor,
                     d.DataPagamento,
                     d.Fornecedor != null ? d.Fornecedor.Nome : null,
+                    d.ComprovadaPeloExtrato && _context.MovimentosExtrato.Any(m => m.DespesaId == d.Id),
                     _context.Documentos
                         .Where(doc => doc.DespesaId == d.Id)
                         .Select(doc => new DocumentoResumo(doc.Id, doc.Tipo, doc.Numero, doc.NomeOriginal, doc.Tamanho))

@@ -84,6 +84,7 @@
                     <option>TED</option>
                     <option>Boleto</option>
                     <option>Cartão da instituição</option>
+                    <option>Débito em conta</option>
                   </select>
                 </div>
                 <div class="col-md-4">
@@ -102,6 +103,12 @@
                   <label class="form-label" for="historico">Histórico</label>
                   <textarea class="form-control" id="historico" rows="2" maxlength="200" required
                             placeholder="O que foi comprado e para quê"></textarea>
+                </div>
+                <div class="col-12" id="blocoJustificativa" hidden>
+                  <label class="form-label" for="justificativa">Justificativa do gasto acima do previsto</label>
+                  <textarea class="form-control" id="justificativa" rows="2" maxlength="500"
+                            placeholder="Por que a meta precisa deste valor a mais"></textarea>
+                  <div class="form-text">A despesa fica registrada e aguarda a autorização da coordenação.</div>
                 </div>
               </div>
             </div>
@@ -122,9 +129,10 @@
                     <option value="NFS-e">Nota fiscal de serviço (NFS-e)</option>
                     <option value="Recibo">Recibo</option>
                     <option value="Cupom fiscal">Cupom fiscal</option>
+                    <option value="Extrato">Extrato bancário (tarifa, sem nota)</option>
                   </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4" id="colunaNumero">
                   <label class="form-label" for="numeroDocumento">Nº do documento</label>
                   <input class="form-control" id="numeroDocumento" required>
                 </div>

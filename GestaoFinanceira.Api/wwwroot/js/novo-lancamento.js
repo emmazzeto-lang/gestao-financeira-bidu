@@ -5,7 +5,7 @@ const $ = id => document.getElementById(id);
 const campos = {
   parceria: $('parceria'), plano: $('plano'), fonte: $('fonte'), meta: $('meta'),
   fornecedor: $('fornecedor'), cnpj: $('cnpj'), conta: $('conta'), data: $('data'),
-  competencia: $('competencia'), valor: $('valor'), historico: $('historico'),
+  competencia: $('competencia'), valor: $('valor'), historico: $('historico'), justificativa: $('justificativa'),
   comprovante: $('comprovante'), tipoDocumento: $('tipoDocumento'), numeroDocumento: $('numeroDocumento')
 };
 
@@ -25,6 +25,8 @@ function opcoes(select, itens, textoVazio) {
 function planoAtual() { return planos.find(p => p.id == campos.plano.value); }
 function metaAtual() { return metas.find(m => m.id == campos.meta.value); }
 function fornecedorAtual() { return fornecedores.find(f => f.id == campos.fornecedor.value); }
+// Tarifa bancária: sem arquivo, o extrato comprova na conciliação
+function peloExtrato() { return campos.tipoDocumento.value === 'Extrato'; }
 
 // ---------- Cadastros vindos da API ----------
 
@@ -139,7 +141,7 @@ function verificarDocumento() {
   docUsadoEm = null;
 
   const numero = campos.numeroDocumento.value.trim();
-  if (!numero) {
+  if (!numero || peloExtrato()) {
     conferir();
     return;
   }
@@ -168,24 +170,43 @@ function conferir() {
   const numeroDoc = campos.numeroDocumento.value.trim();
 
   const disponivelAntes = meta ? meta.valorPrevisto - meta.executado : 0;
+  const passaDoSaldo = valor > 0 && !!meta && valor > disponivelAntes;
+  const justificativa = campos.justificativa.value.trim();
+  $('blocoJustificativa').hidden = !passaDoSaldo;
 
   const itens = [
     { ok: !!plano?.validado, texto: plano?.validado ? 'Parceria com plano de trabalho validado' : 'O plano de trabalho desta parceria ainda não foi validado' },
     { ok: !!meta, texto: 'Meta pertence ao plano selecionado' },
     { ok: !!meta && meta.fonteRecursoId == campos.fonte.value, texto: 'Fonte de recurso cobre a meta' },
+    peloExtrato()
+      ? {
+        ok: !campos.fornecedor.value,
+        erro: !!campos.fornecedor.value,
+        texto: campos.fornecedor.value
+          ? 'Só despesa sem fornecedor, como tarifa, é comprovada pelo extrato'
+          : 'Tarifa comprovada pelo extrato, na conciliação'
+      }
+      : {
+        ok: !!arquivo && !!numeroDoc && !docUsadoEm,
+        erro: !!docUsadoEm,
+        texto: docUsadoEm
+          ? `Comprovante único: documento ${numeroDoc} já usado na despesa Nº ${docUsadoEm}`
+          : 'Comprovante anexado e numerado'
+      },
     {
-      ok: !!arquivo && !!numeroDoc && !docUsadoEm,
-      erro: !!docUsadoEm,
-      texto: docUsadoEm
-        ? `Comprovante único: documento ${numeroDoc} já usado na despesa Nº ${docUsadoEm}`
-        : 'Comprovante anexado e numerado'
-    },
-    {
-      ok: valor > 0 && !!meta && valor <= disponivelAntes,
-      erro: valor > disponivelAntes && !!meta,
-      texto: valor > disponivelAntes && meta ? 'O valor passa do saldo disponível na meta' : 'Valor cabe no saldo da meta'
+      // Acima do saldo pode seguir, mas só com justificativa
+      ok: valor > 0 && !!meta && (!passaDoSaldo || !!justificativa),
+      erro: passaDoSaldo && !justificativa,
+      texto: !passaDoSaldo
+        ? 'Valor cabe no saldo da meta'
+        : justificativa
+          ? 'Passa do saldo da meta: segue com justificativa para autorização'
+          : 'O valor passa do saldo da meta: escreva a justificativa'
     }
   ];
+
+  // Pelo extrato não há arquivo nem número para preencher
+  ['areaEnvio', 'arquivoAnexado', 'colunaNumero'].forEach(id => $(id).hidden = peloExtrato());
 
   $('checagens').innerHTML = itens.map(i => {
     const classe = i.ok ? 'ok' : i.erro ? 'erro' : '';
@@ -237,6 +258,7 @@ function mostrarAviso(texto) {
 function limparFormulario() {
   campos.valor.value = '';
   campos.historico.value = '';
+  campos.justificativa.value = '';
   campos.numeroDocumento.value = '';
   campos.comprovante.value = '';
   arquivo = null;
@@ -260,10 +282,13 @@ campos.fornecedor.addEventListener('change', () => {
   verificarDocumento();
 });
 
-campos.tipoDocumento.addEventListener('change', verificarDocumento);
+campos.tipoDocumento.addEventListener('change', () => {
+  if (peloExtrato()) $('formaPagamento').value = 'Débito em conta';
+  verificarDocumento();
+});
 campos.numeroDocumento.addEventListener('input', verificarDocumento);
 
-['meta', 'data', 'competencia', 'valor', 'historico', 'conta'].forEach(nome =>
+['meta', 'data', 'competencia', 'valor', 'historico', 'conta', 'justificativa'].forEach(nome =>
   campos[nome].addEventListener('input', conferir));
 
 campos.valor.addEventListener('blur', () => {
@@ -299,7 +324,9 @@ $('formLancamento').addEventListener('submit', async e => {
     contaBancariaId: Number(campos.conta.value),
     planoTrabalhoId: Number(campos.plano.value),
     metaId: Number(campos.meta.value),
-    fornecedorId: campos.fornecedor.value ? Number(campos.fornecedor.value) : null
+    fornecedorId: campos.fornecedor.value ? Number(campos.fornecedor.value) : null,
+    justificativaExcesso: campos.justificativa.value.trim() || null,
+    comprovadaPeloExtrato: peloExtrato()
   };
 
   let salva = null;
@@ -307,15 +334,21 @@ $('formLancamento').addEventListener('submit', async e => {
   try {
     salva = await apiPost('Despesas', despesa);
 
-    const envio = new FormData();
-    envio.append('despesaId', salva.id);
-    envio.append('tipo', campos.tipoDocumento.value);
-    envio.append('numero', campos.numeroDocumento.value.trim());
-    envio.append('arquivo', arquivo);
+    if (!despesa.comprovadaPeloExtrato) {
+      const envio = new FormData();
+      envio.append('despesaId', salva.id);
+      envio.append('tipo', campos.tipoDocumento.value);
+      envio.append('numero', campos.numeroDocumento.value.trim());
+      envio.append('arquivo', arquivo);
 
-    await apiEnviarArquivo('Documentos', envio);
+      await apiEnviarArquivo('Documentos', envio);
+    }
 
-    mostrarAviso(`Despesa Nº ${salva.id} registrada com o comprovante.`);
+    mostrarAviso(salva.justificativaExcesso
+      ? `Despesa Nº ${salva.id} registrada. O gasto acima do previsto aguarda a autorização da coordenação.`
+      : despesa.comprovadaPeloExtrato
+        ? `Despesa Nº ${salva.id} registrada. Ela fica comprovada quando for conciliada com o extrato.`
+        : `Despesa Nº ${salva.id} registrada com o comprovante.`);
     limparFormulario();
     await atualizarMetas();
   } catch (erro) {
