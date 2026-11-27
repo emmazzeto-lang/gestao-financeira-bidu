@@ -464,6 +464,11 @@
   margin-top: 1px;
 }
 
+/* Texto longo, como uma justificativa, quebra a linha em vez de ser cortado */
+.razao .quebra {
+  white-space: normal;
+}
+
 .razao .transportado td {
   color: var(--tinta-3);
   font-style: italic;

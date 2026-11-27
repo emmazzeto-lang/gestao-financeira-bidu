@@ -125,6 +125,12 @@ namespace GestaoFinanceira.Api.Data
                 .HasForeignKey(d => d.CriadoPorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Despesa>()
+                .HasOne(d => d.AutorizadoPor)
+                .WithMany()
+                .HasForeignKey(d => d.AutorizadoPorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Receita>()
                 .HasOne(r => r.CriadoPor)
                 .WithMany()

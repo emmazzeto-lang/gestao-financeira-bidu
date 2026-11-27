@@ -88,6 +88,49 @@ namespace GestaoFinanceira.Tests
         }
 
         [Fact]
+        public async Task DespesaComFornecedorNaoEhComprovadaPeloExtrato()
+        {
+            using var context = BancoDeTeste.Criar();
+            var service = new DespesaService(context);
+            var despesa = BancoDeTeste.NovaDespesa(fornecedorId: 1);
+            despesa.ComprovadaPeloExtrato = true;
+
+            var erro = await service.ValidarAsync(despesa);
+
+            Assert.NotNull(erro);
+        }
+
+        [Fact]
+        public async Task AcimaDoSaldoComJustificativaPassa()
+        {
+            using var context = BancoDeTeste.Criar();
+            context.Despesas.Add(BancoDeTeste.NovaDespesa(valor: 900));
+            await context.SaveChangesAsync();
+            var service = new DespesaService(context);
+            var despesa = BancoDeTeste.NovaDespesa(valor: 200);
+            despesa.JustificativaExcesso = "  Reajuste do fornecedor  ";
+
+            var erro = await service.ValidarAsync(despesa);
+
+            Assert.Null(erro);
+            Assert.Equal("Reajuste do fornecedor", despesa.JustificativaExcesso);
+        }
+
+        [Fact]
+        public async Task DentroDoSaldoAJustificativaEhDescartada()
+        {
+            using var context = BancoDeTeste.Criar();
+            var service = new DespesaService(context);
+            var despesa = BancoDeTeste.NovaDespesa(valor: 100);
+            despesa.JustificativaExcesso = "Não precisava";
+
+            var erro = await service.ValidarAsync(despesa);
+
+            Assert.Null(erro);
+            Assert.Null(despesa.JustificativaExcesso);
+        }
+
+        [Fact]
         public async Task NaEdicaoAPropriaDespesaNaoContaNoSaldo()
         {
             using var context = BancoDeTeste.Criar();

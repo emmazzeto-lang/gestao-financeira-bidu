@@ -36,7 +36,7 @@ namespace GestaoFinanceira.Api.Services
                 return new RelatorioExecucao(parceria.TermoFomento, parceria.Nome, parceria.DataInicio,
                     parceria.DataFim, null, null, 0, 0, new());
 
-            var despesasComComprovante = _context.Documentos.Select(d => d.DespesaId);
+            var despesasSemComprovante = _context.Despesas.SemComprovante(_context).Select(d => d.Id);
 
             var metas = await _context.Metas
                 .AsNoTracking()
@@ -50,11 +50,11 @@ namespace GestaoFinanceira.Api.Services
                     m.ValorPrevisto,
                     _context.Despesas.Where(d => d.MetaId == m.Id).Sum(d => d.Valor),
                     _context.Despesas.Count(d => d.MetaId == m.Id),
-                    _context.Despesas.Count(d => d.MetaId == m.Id && despesasComComprovante.Contains(d.Id))))
+                    _context.Despesas.Count(d => d.MetaId == m.Id && !despesasSemComprovante.Contains(d.Id))))
                 .ToListAsync();
 
             var semComprovante = await _context.Despesas
-                .CountAsync(d => d.PlanoTrabalhoId == plano.Id && !despesasComComprovante.Contains(d.Id));
+                .CountAsync(d => d.PlanoTrabalhoId == plano.Id && despesasSemComprovante.Contains(d.Id));
 
             // A conta não está ligada à parceria, então olhamos as contas que o plano usou
             var contasDoPlano = await _context.Despesas
@@ -107,6 +107,7 @@ namespace GestaoFinanceira.Api.Services
                 .Include(d => d.Meta!).ThenInclude(m => m.FonteRecurso)
                 .Include(d => d.Fornecedor)
                 .Include(d => d.CriadoPor)
+                .Include(d => d.AutorizadoPor)
                 .FirstOrDefaultAsync(d => d.Id == despesaId);
 
             if (despesa == null)
@@ -126,7 +127,7 @@ namespace GestaoFinanceira.Api.Services
             var fornecedor = despesa.Fornecedor != null ? $" - {despesa.Fornecedor.Nome}" : "";
             var autor = despesa.CriadoPor != null ? $" - por {despesa.CriadoPor.Nome}" : "";
 
-            return new List<EtapaRastreio>
+            var etapas = new List<EtapaRastreio>
             {
                 new("Parceria", $"{plano.Parceria!.TermoFomento} - {plano.Parceria.Nome}", true),
                 new("Plano de trabalho", plano.Descricao + validacao, plano.Validado),
@@ -135,11 +136,21 @@ namespace GestaoFinanceira.Api.Services
                 new("Lançamento", $"Nº {despesa.Id} - R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))} - {despesa.DataPagamento:dd/MM/yyyy}{autor}", true),
                 documento != null
                     ? new("Comprovante", $"{documento.Tipo} {documento.Numero}{fornecedor}", true)
-                    : new("Comprovante", "Ainda não enviado", false),
+                    : despesa.ComprovadaPeloExtrato
+                        ? new("Comprovante", movimento != null ? $"Extrato bancário - {movimento.Descricao}" : "Pelo extrato, quando a despesa for conciliada", movimento != null)
+                        : new("Comprovante", "Ainda não enviado", false),
                 movimento != null
                     ? new("Conciliação", $"Extrato {movimento.ContaBancaria!.NomeBanco} de {movimento.Data:dd/MM/yyyy}", true)
                     : new("Conciliação", "Ainda não conciliado com o extrato", false)
             };
+
+            // Logo depois do lançamento, quando ele passou o saldo da meta
+            if (despesa.JustificativaExcesso != null)
+                etapas.Insert(5, despesa.AutorizadoPor != null
+                    ? new("Acima do previsto", $"Autorizado por {despesa.AutorizadoPor.Nome} em {despesa.AutorizadoEm:dd/MM/yyyy}", true)
+                    : new("Acima do previsto", "Aguardando a autorização da coordenação", false));
+
+            return etapas;
         }
     }
 }

@@ -19,15 +19,17 @@ async function carregar() {
 
 function desenhar() {
   const busca = $('busca').value.trim().toLowerCase();
-  const sem = despesas.filter(d => !d.documentos.length);
+  // Tarifa conciliada conta como comprovada: o extrato mostra a cobrança
+  const comprovada = d => d.documentos.length > 0 || d.peloExtrato;
+  const sem = despesas.filter(d => !comprovada(d));
 
   $('qtdTodas').textContent = despesas.length;
   $('qtdCom').textContent = despesas.length - sem.length;
   $('qtdSem').textContent = sem.length;
 
   const visiveis = despesas.filter(d => {
-    if (filtro === 'com' && !d.documentos.length) return false;
-    if (filtro === 'sem' && d.documentos.length) return false;
+    if (filtro === 'com' && !comprovada(d)) return false;
+    if (filtro === 'sem' && comprovada(d)) return false;
     if (!busca) return true;
 
     // O valor entra nos dois jeitos de digitar: 1.234,56 e 1234,56
@@ -46,7 +48,9 @@ function desenhar() {
               <i class="bi bi-download"></i> ${escaparHtml(`${doc.tipo} ${doc.numero}`)}
               <small class="text-secondary">${Math.max(1, Math.round(doc.tamanho / 1024))} KB</small>
             </a>`).join('')
-        : '<span class="conferencia falta"><i class="bi bi-exclamation-circle"></i> sem comprovante</span>';
+        : d.peloExtrato
+          ? '<span class="conferencia ok"><i class="bi bi-bank"></i> extrato bancário</span>'
+          : '<span class="conferencia falta"><i class="bi bi-exclamation-circle"></i> sem comprovante</span>';
 
       return `
         <tr style="vertical-align: middle">

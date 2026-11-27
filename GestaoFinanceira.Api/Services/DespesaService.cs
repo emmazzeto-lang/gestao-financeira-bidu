@@ -58,15 +58,27 @@ namespace GestaoFinanceira.Api.Services
                     return "O fornecedor informado não existe.";
             }
 
+            if (despesa.ComprovadaPeloExtrato && despesa.FornecedorId != null)
+                return "Só despesas sem fornecedor, como tarifas bancárias, são comprovadas pelo extrato.";
+
             var jaExecutado = await _context.Despesas
                 .Where(d => d.MetaId == meta.Id && d.Id != idEmEdicao)
                 .SumAsync(d => d.Valor);
 
             var disponivel = meta.ValorPrevisto - jaExecutado;
 
-            if (despesa.Valor > disponivel)
-                return $"O valor passa o saldo da meta. Disponível: R$ {disponivel:N2}.";
+            if (despesa.Valor <= disponivel)
+            {
+                // Dentro do saldo não há o que autorizar
+                despesa.JustificativaExcesso = null;
+                return null;
+            }
 
+            // Acima do saldo a despesa pode seguir, mas só com justificativa para a coordenação autorizar
+            if (string.IsNullOrWhiteSpace(despesa.JustificativaExcesso))
+                return $"O valor passa o saldo da meta. Disponível: R$ {disponivel:N2}. Para seguir, escreva a justificativa para a coordenação autorizar.";
+
+            despesa.JustificativaExcesso = despesa.JustificativaExcesso.Trim();
             return null;
         }
     }

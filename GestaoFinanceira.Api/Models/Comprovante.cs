@@ -6,5 +6,5 @@ namespace GestaoFinanceira.Api.Models
 
     public record SituacaoComprovante(
         int DespesaId, string Descricao, decimal Valor, DateTime DataPagamento,
-        string? Fornecedor, List<DocumentoResumo> Documentos);
+        string? Fornecedor, bool PeloExtrato, List<DocumentoResumo> Documentos);
 }

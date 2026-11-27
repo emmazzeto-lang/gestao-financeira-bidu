@@ -80,6 +80,33 @@ namespace GestaoFinanceira.Tests
         }
 
         [Fact]
+        public async Task TarifaConciliadaNaoFicaSemComprovante()
+        {
+            using var context = BancoComMovimento();
+            var tarifa = new Despesa
+            {
+                Descricao = "Tarifa", Valor = 45.90m, DataPagamento = Dia(9, 30), ContaBancariaId = 1,
+                PlanoTrabalhoId = 1, MetaId = 1, ComprovadaPeloExtrato = true
+            };
+            context.Despesas.Add(tarifa);
+            context.SaveChanges();
+            var service = new PainelService(context);
+
+            var antes = await service.ContadoresAsync();
+
+            context.MovimentosExtrato.Add(new MovimentoExtrato
+            {
+                Data = Dia(9, 30), Valor = -45.90m, Descricao = "TARIFA", IdBanco = "T1", ContaBancariaId = 1, DespesaId = tarifa.Id
+            });
+            context.SaveChanges();
+
+            var depois = await service.ContadoresAsync();
+
+            // Antes da conciliação a tarifa ainda está pendente; depois, o extrato a comprova
+            Assert.Equal(depois.SemComprovante + 1, antes.SemComprovante);
+        }
+
+        [Fact]
         public async Task ContadoresDoMenu()
         {
             using var context = BancoComMovimento();
@@ -94,6 +121,7 @@ namespace GestaoFinanceira.Tests
             // A despesa de agosto não tem comprovante; o PIX ainda não foi conciliado
             Assert.Equal(1, contadores.SemComprovante);
             Assert.Equal(1, contadores.AConciliar);
+            Assert.Equal(0, contadores.AguardandoAutorizacao);
         }
 
         [Fact]

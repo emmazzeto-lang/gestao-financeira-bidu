@@ -11,5 +11,5 @@ namespace GestaoFinanceira.Api.Models
         int Ano, int Mes, decimal Transporte, decimal Entradas, decimal Saidas, decimal SaldoFinal,
         List<LinhaRazao> Linhas);
 
-    public record Contadores(int SemComprovante, int AConciliar);
+    public record Contadores(int SemComprovante, int AConciliar, int AguardandoAutorizacao);
 }

@@ -7,6 +7,7 @@ let planos = [];
 let fontes = [];
 let metasDoPlano = {};   // { idDoPlano: [metas] }
 let planoEscolhido = null;
+let excessos = [];
 
 function aviso(texto) {
   const toast = $('aviso');
@@ -62,6 +63,14 @@ async function carregarPlanos() {
 
   desenharPlanos();
   desenharMetas();
+  await carregarExcessos();
+}
+
+// Gastos acima do previsto no plano escolhido (só existem em plano validado)
+async function carregarExcessos() {
+  const plano = planoAtual();
+  excessos = plano?.validado ? await apiGet(`Despesas/acima-do-previsto?planoTrabalhoId=${plano.id}`) : [];
+  desenharExcessos();
 }
 
 // ---------- Desenhar ----------
@@ -125,6 +134,29 @@ function desenharMetas() {
   aplicarPerfis();
 }
 
+function desenharExcessos() {
+  $('listaExcessos').innerHTML = excessos.length
+    ? excessos.map(d => {
+      const autorizacao = d.autorizadoPor
+        ? `<span class="conferencia ok"><i class="bi bi-check2"></i> autorizado</span>
+           <div class="complemento quebra">${escaparHtml(d.autorizadoPor)}, ${dataCurta(d.autorizadoEm)}</div>`
+        : `<span class="conferencia falta"><i class="bi bi-exclamation-circle"></i> aguardando</span>
+           <div><button class="btn btn-primary btn-sm mt-1" type="button" data-autorizar="${d.despesaId}" data-perfis="Administrador,Diretoria" hidden>Autorizar</button></div>`;
+
+      return `
+        <tr style="vertical-align: middle">
+          <td class="numero">${d.despesaId}</td>
+          <td><div class="historico quebra">${escaparHtml(`${d.descricao} - ${d.meta}`)}</div>
+              <div class="complemento quebra">${escaparHtml(d.justificativa)}${d.lancadoPor ? ` - lançada por ${escaparHtml(d.lancadoPor)}` : ''}</div></td>
+          <td class="valor debito">${moeda(d.valor)}</td>
+          <td>${autorizacao}</td>
+        </tr>`;
+    }).join('')
+    : '<tr><td colspan="4" class="ausente">Nenhum gasto acima do previsto neste plano.</td></tr>';
+
+  aplicarPerfis();
+}
+
 // ---------- Ações ----------
 
 $('parceria').addEventListener('change', () => {
@@ -138,6 +170,21 @@ $('listaPlanos').addEventListener('click', e => {
   planoEscolhido = Number(linha.dataset.id);
   desenharPlanos();
   desenharMetas();
+  carregarExcessos().catch(falhou);
+});
+
+$('listaExcessos').addEventListener('click', async e => {
+  const botao = e.target.closest('[data-autorizar]');
+  if (!botao || !confirm(`Autorizar o gasto acima do previsto da despesa Nº ${botao.dataset.autorizar}?`)) return;
+
+  try {
+    await apiPatch(`Despesas/${botao.dataset.autorizar}/autorizar`);
+    aviso('Gasto autorizado.');
+    carregarContadores();
+    await carregarExcessos();
+  } catch (erro) {
+    falhou(erro);
+  }
 });
 
 $('listaMetas').addEventListener('click', async e => {
